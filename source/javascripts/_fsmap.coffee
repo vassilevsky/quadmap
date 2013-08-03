@@ -12,3 +12,5 @@ navigator.geolocation.getCurrentPosition (position) ->
   lat = position.coords.latitude
   lon = position.coords.longitude
   map.setView [lat, lon], DEFAULT_ZOOM
+
+window.map = map
