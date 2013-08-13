@@ -12,6 +12,10 @@
 
   layer.addTo(map);
 
+  $.getJSON("/unaddressed_buildings.geojson", function(data) {
+    return L.geoJson(data).addTo(map);
+  });
+
   navigator.geolocation.getCurrentPosition(function(position) {
     var lat, lon;
     lat = position.coords.latitude;
