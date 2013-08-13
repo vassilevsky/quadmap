@@ -13,7 +13,23 @@
   layer.addTo(map);
 
   $.getJSON("/unaddressed_buildings.geojson", function(data) {
-    return L.geoJson(data).addTo(map);
+    var buildings;
+    buildings = L.geoJson(data, {
+      onEachFeature: function(feature, layer) {
+        return layer.on("click", function(e) {
+          var address, building_id;
+          building_id = e.target.feature.properties.id;
+          address = prompt("Адрес этого дома:");
+          return $.get("http://osm-addresser.herokuapp.com/record", {
+            building_id: building_id,
+            address: address
+          }, function(response) {
+            return alert(response.status);
+          }, "JSONP");
+        });
+      }
+    });
+    return buildings.addTo(map);
   });
 
   navigator.geolocation.getCurrentPosition(function(position) {
