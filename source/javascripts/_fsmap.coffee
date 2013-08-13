@@ -1,4 +1,4 @@
-DEFAULT_ZOOM = 10
+DEFAULT_ZOOM = 18
 
 map = L.map("map")
 
