@@ -2,9 +2,8 @@ DEFAULT_ZOOM = 18
 
 map = L.map("map")
 
-layer = L.tileLayer "http://{s}.tile.cloudmade.com/5d0c99dd4e964633ac4c0176aa8d1a9e/997/256/{z}/{x}/{y}.png",
-  attribution: "Map data © CloudMade"
-  maxZoom: 18
+layer = L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  attribution: "Map data © OpenStreetMap contributors"
 
 layer.addTo map
 
