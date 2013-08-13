@@ -8,7 +8,20 @@ layer = L.tileLayer "http://{s}.tile.cloudmade.com/5d0c99dd4e964633ac4c0176aa8d1
 
 layer.addTo map
 
-$.getJSON "/unaddressed_buildings.geojson", (data) -> L.geoJson(data).addTo(map)
+$.getJSON "/unaddressed_buildings.geojson", (data) ->
+  buildings = L.geoJson data,
+    onEachFeature: (feature, layer) ->
+      layer.on "click", (e) ->
+        building_id = e.target.feature.properties.id
+        address = prompt "Адрес этого дома:"
+        $.get "http://osm-addresser.herokuapp.com/record",
+          building_id: building_id
+          address: address
+          (response) ->
+            alert response.status
+          "JSONP"
+
+  buildings.addTo(map)
 
 navigator.geolocation.getCurrentPosition (position) ->
   lat = position.coords.latitude
