@@ -1,5 +1,5 @@
 (function() {
-  var DEFAULT_ZOOM, layer, map;
+  var DEFAULT_ZOOM, layer, map, tagBuilding;
 
   DEFAULT_ZOOM = 18;
 
@@ -11,21 +11,29 @@
 
   layer.addTo(map);
 
+  tagBuilding = function(e) {
+    var address, building, building_id;
+    building = e.target;
+    building_id = building.feature.properties.id;
+    address = prompt("Адрес этого дома:");
+    if (address.length > 0) {
+      $.get("http://osm-addresser.herokuapp.com/record", {
+        building_id: building_id,
+        address: address
+      }, function(response) {
+        return alert(response.status);
+      }, "JSONP");
+    }
+    return building.setStyle({
+      color: "green"
+    });
+  };
+
   $.getJSON("/unaddressed_buildings.geojson", function(data) {
     var buildings;
     buildings = L.geoJson(data, {
       onEachFeature: function(feature, layer) {
-        return layer.on("click", function(e) {
-          var address, building_id;
-          building_id = e.target.feature.properties.id;
-          address = prompt("Адрес этого дома:");
-          return $.get("http://osm-addresser.herokuapp.com/record", {
-            building_id: building_id,
-            address: address
-          }, function(response) {
-            return alert(response.status);
-          }, "JSONP");
-        });
+        return layer.on("click", tagBuilding);
       }
     });
     return buildings.addTo(map);
