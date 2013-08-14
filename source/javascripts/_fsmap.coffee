@@ -8,7 +8,8 @@ layer = L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 layer.addTo map
 
 tagBuilding = (e) ->
-  building_id = e.target.feature.properties.id
+  building = e.target
+  building_id = building.feature.properties.id
   address = prompt "Адрес этого дома:"
 
   if address.length > 0
@@ -17,6 +18,8 @@ tagBuilding = (e) ->
       address: address
       (response) -> alert response.status
       "JSONP"
+
+  building.setStyle color: "green"
 
 $.getJSON "/unaddressed_buildings.geojson", (data) ->
   buildings = L.geoJson data,
