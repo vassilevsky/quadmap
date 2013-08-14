@@ -39,11 +39,10 @@
     return buildings.addTo(map);
   });
 
-  navigator.geolocation.getCurrentPosition(function(position) {
-    var lat, lon;
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
-    return map.setView([lat, lon], DEFAULT_ZOOM);
+  map.locate({
+    watch: true,
+    setView: true,
+    timeout: 60 * 1000
   });
 
   window.map = map;
