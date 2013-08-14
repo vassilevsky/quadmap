@@ -7,18 +7,20 @@ layer = L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 
 layer.addTo map
 
+tagBuilding = (e) ->
+  building_id = e.target.feature.properties.id
+  address = prompt "Адрес этого дома:"
+  $.get "http://osm-addresser.herokuapp.com/record",
+    building_id: building_id
+    address: address
+    (response) ->
+      alert response.status
+    "JSONP"
+
 $.getJSON "/unaddressed_buildings.geojson", (data) ->
   buildings = L.geoJson data,
     onEachFeature: (feature, layer) ->
-      layer.on "click", (e) ->
-        building_id = e.target.feature.properties.id
-        address = prompt "Адрес этого дома:"
-        $.get "http://osm-addresser.herokuapp.com/record",
-          building_id: building_id
-          address: address
-          (response) ->
-            alert response.status
-          "JSONP"
+      layer.on "click", tagBuilding
 
   buildings.addTo(map)
 
