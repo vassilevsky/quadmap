@@ -13,8 +13,7 @@ tagBuilding = (e) ->
   $.get "http://osm-addresser.herokuapp.com/record",
     building_id: building_id
     address: address
-    (response) ->
-      alert response.status
+    (response) -> alert response.status
     "JSONP"
 
 $.getJSON "/unaddressed_buildings.geojson", (data) ->
