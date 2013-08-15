@@ -42,7 +42,8 @@
   map.locate({
     watch: true,
     setView: true,
-    timeout: 60 * 1000
+    timeout: 60 * 1000,
+    enableHighAccuracy: true
   });
 
   window.map = map;
