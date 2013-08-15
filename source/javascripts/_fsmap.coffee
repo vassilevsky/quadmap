@@ -28,9 +28,10 @@ $.getJSON "/unaddressed_buildings.geojson", (data) ->
 
   buildings.addTo(map)
 
-navigator.geolocation.getCurrentPosition (position) ->
-  lat = position.coords.latitude
-  lon = position.coords.longitude
-  map.setView [lat, lon], DEFAULT_ZOOM
+map.locate
+  watch: true
+  setView: true
+  timeout: 60 * 1000
+  enableHighAccuracy: true
 
 window.map = map
