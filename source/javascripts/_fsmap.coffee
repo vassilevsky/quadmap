@@ -1,9 +1,7 @@
 map = L.map("map")
 
-layer = L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+map.addLayer L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   attribution: "Map data © OpenStreetMap contributors"
-
-layer.addTo map
 
 tagBuilding = (e) ->
   building = e.target
@@ -25,11 +23,9 @@ tagBuilding = (e) ->
   building.setStyle color: "green"
 
 $.getJSON "/unaddressed_buildings.geojson", (data) ->
-  buildings = L.geoJson data,
+  map.addLayer L.geoJson data,
     onEachFeature: (feature, layer) ->
       layer.on "click", tagBuilding
-
-  buildings.addTo(map)
 
 map.locate
   watch: true
