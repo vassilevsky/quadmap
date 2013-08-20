@@ -1,5 +1,3 @@
-DEFAULT_ZOOM = 18
-
 map = L.map("map")
 
 layer = L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
