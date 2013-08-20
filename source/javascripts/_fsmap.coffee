@@ -9,6 +9,8 @@ tagBuilding = (e) ->
   building = e.target
   building_id = building.feature.properties.id
 
+  building.setStyle color: "red"
+
   number = prompt "Номер?"
   street = prompt "Улица?"
   levels = prompt "Этажей?"
