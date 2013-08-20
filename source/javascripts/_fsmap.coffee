@@ -16,7 +16,7 @@ tagBuilding = (e) ->
   if "#{number}#{street}#{levels}".length > 0
     $.get "http://osm-addresser.herokuapp.com/record",
       building_id: building_id
-      address: "#{street} #{number}, #{levels} этажей"
+      address: "#{number} #{street}, #{levels} этажей"
       (response) -> alert response.status
       "JSONP"
 
