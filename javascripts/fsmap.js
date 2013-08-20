@@ -1,25 +1,26 @@
 (function() {
-  var DEFAULT_ZOOM, layer, map, tagBuilding;
-
-  DEFAULT_ZOOM = 18;
+  var map, tagBuilding;
 
   map = L.map("map");
 
-  layer = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  map.addLayer(L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "Map data © OpenStreetMap contributors"
-  });
-
-  layer.addTo(map);
+  }));
 
   tagBuilding = function(e) {
-    var address, building, building_id;
+    var building, building_id, levels, number, street;
     building = e.target;
     building_id = building.feature.properties.id;
-    address = prompt("Адрес этого дома:");
-    if (address.length > 0) {
+    building.setStyle({
+      color: "red"
+    });
+    number = prompt("Номер?");
+    street = prompt("Улица?");
+    levels = prompt("Этажей?");
+    if (("" + number + street + levels).length > 0) {
       $.get("http://osm-addresser.herokuapp.com/record", {
         building_id: building_id,
-        address: address
+        address: "" + street + " " + number + ", " + levels + " этажей"
       }, function(response) {
         return alert(response.status);
       }, "JSONP");
@@ -30,13 +31,11 @@
   };
 
   $.getJSON("/unaddressed_buildings.geojson", function(data) {
-    var buildings;
-    buildings = L.geoJson(data, {
+    return map.addLayer(L.geoJson(data, {
       onEachFeature: function(feature, layer) {
         return layer.on("click", tagBuilding);
       }
-    });
-    return buildings.addTo(map);
+    }));
   });
 
   map.locate({
