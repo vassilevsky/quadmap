@@ -8,12 +8,15 @@ layer.addTo map
 tagBuilding = (e) ->
   building = e.target
   building_id = building.feature.properties.id
-  address = prompt "Адрес этого дома:"
 
-  if address.length > 0
+  number = prompt "Номер?"
+  street = prompt "Улица?"
+  levels = prompt "Этажей?"
+
+  if "#{number}#{street}#{levels}".length > 0
     $.get "http://osm-addresser.herokuapp.com/record",
       building_id: building_id
-      address: address
+      address: "#{street} #{number}, #{levels} этажей"
       (response) -> alert response.status
       "JSONP"
 
