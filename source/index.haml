@@ -2,17 +2,15 @@
 %html
   %head
     %title Fullscreen Map
-    %meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
-    = stylesheet_link_tag "//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css"
-    :css
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
+    %meta(charset='utf-8')
+    = stylesheet_link_tag '//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css'
+    = stylesheet_link_tag 'all'
   %body
-    #map
-    = javascript_include_tag "//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
-    = javascript_include_tag "fsmap"
+    #map1
+    #map2
+    #map3
+    #map4
+    = javascript_include_tag '//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js'
+    = javascript_include_tag '//maps.googleapis.com/maps/api/js?key=AIzaSyCUGwhV498Fb5_q4p126lCVRYjnpwXIy24&sensor=false'
+    = javascript_include_tag '//api-maps.yandex.ru/2.0-stable/?lang=ru-RU&load=package.standard'
+    = javascript_include_tag 'all'

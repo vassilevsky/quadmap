@@ -1,11 +1,26 @@
-map = L.map("map")
+lat = 54.32
+lon = 48.4
+zoom = 14
 
-map.addLayer L.tileLayer "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  attribution: "Map data © OpenStreetMap contributors"
+map1 = null
+map2 = null
+map3 = null
 
-map.locate
-  setView: true
-  timeout: 60 * 1000
-  enableHighAccuracy: true
 
-window.map = map
+window.onload = ->
+  map1 = new L.Map 'map1'
+
+  map1.addLayer new L.TileLayer 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© OpenStreetMap contributors'
+
+  map1.setView [lat, lon], zoom
+
+
+google.maps.event.addDomListener window, 'load', ->
+  map2 = new google.maps.Map document.getElementById('map2'),
+    center: new google.maps.LatLng lat, lon
+    zoom: zoom
+
+
+ymaps.ready ->
+  map3 = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
