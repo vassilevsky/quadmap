@@ -18,7 +18,13 @@
     map1.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }));
-    return map1.setView([lat, lon], zoom);
+    map1.setView([lat, lon], zoom);
+    return map1.on('moveend', function() {
+      var new_center;
+      new_center = map1.getCenter();
+      map2.panTo(new google.maps.LatLng(new_center.lat, new_center.lng));
+      return map3.panTo([new_center.lat, new_center.lng]);
+    });
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
