@@ -15,6 +15,11 @@ window.onload = ->
 
   map1.setView [lat, lon], zoom
 
+  map1.on 'moveend', ->
+    new_center = map1.getCenter()
+    map2.panTo new google.maps.LatLng new_center.lat, new_center.lng
+    map3.panTo [new_center.lat, new_center.lng]
+
 
 google.maps.event.addDomListener window, 'load', ->
   map2 = new google.maps.Map document.getElementById('map2'),
