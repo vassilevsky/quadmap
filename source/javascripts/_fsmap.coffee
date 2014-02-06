@@ -20,6 +20,11 @@ window.onload = ->
     map2.panTo new google.maps.LatLng new_center.lat, new_center.lng
     map3.panTo [new_center.lat, new_center.lng]
 
+  map1.on 'zoomend', ->
+    new_zoom = map1.getZoom()
+    map2.setZoom new_zoom
+    map3.setZoom new_zoom
+
 
 google.maps.event.addDomListener window, 'load', ->
   map2 = new google.maps.Map document.getElementById('map2'),
