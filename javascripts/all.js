@@ -19,11 +19,17 @@
       attribution: '© OpenStreetMap contributors'
     }));
     map1.setView([lat, lon], zoom);
-    return map1.on('moveend', function() {
+    map1.on('moveend', function() {
       var new_center;
       new_center = map1.getCenter();
       map2.panTo(new google.maps.LatLng(new_center.lat, new_center.lng));
       return map3.panTo([new_center.lat, new_center.lng]);
+    });
+    return map1.on('zoomend', function() {
+      var new_zoom;
+      new_zoom = map1.getZoom();
+      map2.setZoom(new_zoom);
+      return map3.setZoom(new_zoom);
     });
   };
 
