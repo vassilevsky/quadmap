@@ -5,6 +5,7 @@ zoom = 14
 map1 = null
 map2 = null
 map3 = null
+map4 = null
 
 
 window.onload = ->
@@ -17,13 +18,17 @@ window.onload = ->
 
   map1.on 'moveend', ->
     new_center = map1.getCenter()
+    new_zoom = map1.getZoom()
+
     map2.panTo new google.maps.LatLng new_center.lat, new_center.lng
     map3.panTo [new_center.lat, new_center.lng]
+    map4.setCenter new DG.GeoPoint(new_center.lng, new_center.lat), new_zoom
 
   map1.on 'zoomend', ->
     new_zoom = map1.getZoom()
     map2.setZoom new_zoom
     map3.setZoom new_zoom
+    map4.setZoom new_zoom
 
 
 google.maps.event.addDomListener window, 'load', ->
@@ -34,3 +39,8 @@ google.maps.event.addDomListener window, 'load', ->
 
 ymaps.ready ->
   map3 = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
+
+
+DG.autoload ->
+  map4 = new DG.Map 'map4'
+  map4.setCenter new DG.GeoPoint(lon, lat), zoom
