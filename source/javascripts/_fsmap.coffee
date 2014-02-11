@@ -16,7 +16,7 @@ window.onload = ->
 
   map1.setView [lat, lon], zoom
 
-  map1.on 'moveend', ->
+  map1.on 'dragend', ->
     new_center = map1.getCenter()
 
     map2.setCenter new google.maps.LatLng new_center.lat, new_center.lng
