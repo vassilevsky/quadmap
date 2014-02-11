@@ -36,6 +36,21 @@ google.maps.event.addDomListener window, 'load', ->
     center: new google.maps.LatLng lat, lon
     zoom: zoom
 
+  google.maps.event.addListener map2, 'dragend', ->
+    new_center = map2.getCenter()
+    new_zoom = map2.getZoom()
+
+    map1.setView [new_center.lat(), new_center.lng()], new_zoom, reset: true
+    map3.setCenter [new_center.lat(), new_center.lng()]
+    map4.setCenter new DG.GeoPoint(new_center.lng(), new_center.lat())
+
+  google.maps.event.addListener map2, 'zoom_changed', ->
+    new_zoom = map2.getZoom()
+
+    map1.setZoom new_zoom
+    map3.setZoom new_zoom
+    map4.setZoom new_zoom
+
 
 ymaps.ready ->
   map3 = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
