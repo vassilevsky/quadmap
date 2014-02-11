@@ -21,7 +21,7 @@
       attribution: '© OpenStreetMap contributors'
     }));
     map1.setView([lat, lon], zoom);
-    map1.on('moveend', function() {
+    map1.on('dragend', function() {
       var new_center;
       new_center = map1.getCenter();
       map2.setCenter(new google.maps.LatLng(new_center.lat, new_center.lng));
