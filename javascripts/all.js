@@ -38,9 +38,26 @@
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
-    return map2 = new google.maps.Map(document.getElementById('map2'), {
+    map2 = new google.maps.Map(document.getElementById('map2'), {
       center: new google.maps.LatLng(lat, lon),
       zoom: zoom
+    });
+    google.maps.event.addListener(map2, 'dragend', function() {
+      var new_center, new_zoom;
+      new_center = map2.getCenter();
+      new_zoom = map2.getZoom();
+      map1.setView([new_center.lat(), new_center.lng()], new_zoom, {
+        reset: true
+      });
+      map3.setCenter([new_center.lat(), new_center.lng()]);
+      return map4.setCenter(new DG.GeoPoint(new_center.lng(), new_center.lat()));
+    });
+    return google.maps.event.addListener(map2, 'zoom_changed', function() {
+      var new_zoom;
+      new_zoom = map2.getZoom();
+      map1.setZoom(new_zoom);
+      map3.setZoom(new_zoom);
+      return map4.setZoom(new_zoom);
     });
   });
 
