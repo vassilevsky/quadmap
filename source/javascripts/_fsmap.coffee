@@ -8,10 +8,15 @@ maps = {}
 d = -> console.debug arguments
 
 
-setZoom = (map, zoom) ->
-  unless map.getZoom() == zoom
-    d "setting map #{map} to zoom #{zoom}"
-    map.setZoom zoom
+setZoom = (source_map_name) ->
+  new_zoom = maps[source_map_name].getZoom()
+
+  for target_map_name, target_map of maps when target_map_name isnt source_map_name
+    if target_map.getZoom() isnt new_zoom
+      d "set #{target_map_name} zoom to #{new_zoom}"
+      target_map.setZoom new_zoom
+
+  return
 
 
 window.onload = ->
@@ -30,11 +35,7 @@ window.onload = ->
     maps.dgis.setCenter new DG.GeoPoint new_center.lng, new_center.lat
 
   maps.osm.on 'zoomend', ->
-    new_zoom = maps.osm.getZoom()
-
-    setZoom maps.google, new_zoom
-    setZoom maps.yandex, new_zoom
-    setZoom maps.dgis, new_zoom
+    setZoom 'osm'
 
 
 google.maps.event.addDomListener window, 'load', ->
@@ -51,11 +52,7 @@ google.maps.event.addDomListener window, 'load', ->
     maps.dgis.setCenter new DG.GeoPoint new_center.lng(), new_center.lat()
 
   google.maps.event.addListener maps.google, 'zoom_changed', ->
-    new_zoom = maps.google.getZoom()
-
-    setZoom maps.osm, new_zoom
-    setZoom maps.yandex, new_zoom
-    setZoom maps.dgis, new_zoom
+    setZoom 'google'
 
 
 ymaps.ready ->
