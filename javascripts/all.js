@@ -13,10 +13,17 @@
     return console.debug(arguments);
   };
 
-  setZoom = function(map, zoom) {
-    if (map.getZoom() !== zoom) {
-      d("setting map " + map + " to zoom " + zoom);
-      return map.setZoom(zoom);
+  setZoom = function(source_map_name) {
+    var new_zoom, target_map, target_map_name;
+    new_zoom = maps[source_map_name].getZoom();
+    for (target_map_name in maps) {
+      target_map = maps[target_map_name];
+      if (target_map_name !== source_map_name) {
+        if (target_map.getZoom() !== new_zoom) {
+          d("set " + target_map_name + " zoom to " + new_zoom);
+          target_map.setZoom(new_zoom);
+        }
+      }
     }
   };
 
@@ -34,11 +41,7 @@
       return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng, new_center.lat));
     });
     return maps.osm.on('zoomend', function() {
-      var new_zoom;
-      new_zoom = maps.osm.getZoom();
-      setZoom(maps.google, new_zoom);
-      setZoom(maps.yandex, new_zoom);
-      return setZoom(maps.dgis, new_zoom);
+      return setZoom('osm');
     });
   };
 
@@ -58,11 +61,7 @@
       return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng(), new_center.lat()));
     });
     return google.maps.event.addListener(maps.google, 'zoom_changed', function() {
-      var new_zoom;
-      new_zoom = maps.google.getZoom();
-      setZoom(maps.osm, new_zoom);
-      setZoom(maps.yandex, new_zoom);
-      return setZoom(maps.dgis, new_zoom);
+      return setZoom('google');
     });
   });
 
