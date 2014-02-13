@@ -11,6 +11,12 @@ map4 = null
 d = -> console.debug arguments
 
 
+setZoom = (map, zoom) ->
+  unless map.getZoom() == zoom
+    d "setting map #{map} to zoom #{zoom}"
+    map.setZoom zoom
+
+
 window.onload = ->
   map1 = new L.Map 'map1'
 
@@ -29,9 +35,9 @@ window.onload = ->
   map1.on 'zoomend', ->
     new_zoom = map1.getZoom()
 
-    map2.setZoom new_zoom
-    map3.setZoom new_zoom
-    map4.setZoom new_zoom
+    setZoom map2, new_zoom
+    setZoom map3, new_zoom
+    setZoom map4, new_zoom
 
 
 google.maps.event.addDomListener window, 'load', ->
@@ -50,9 +56,9 @@ google.maps.event.addDomListener window, 'load', ->
   google.maps.event.addListener map2, 'zoom_changed', ->
     new_zoom = map2.getZoom()
 
-    map1.setZoom new_zoom
-    map3.setZoom new_zoom
-    map4.setZoom new_zoom
+    setZoom map1, new_zoom
+    setZoom map3, new_zoom
+    setZoom map4, new_zoom
 
 
 ymaps.ready ->
