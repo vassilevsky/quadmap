@@ -1,5 +1,5 @@
 (function() {
-  var d, lat, lon, map1, map2, map3, map4, setZoom, zoom;
+  var d, lat, lon, maps, setZoom, zoom;
 
   lat = 54.32;
 
@@ -7,13 +7,7 @@
 
   zoom = 14;
 
-  map1 = null;
-
-  map2 = null;
-
-  map3 = null;
-
-  map4 = null;
+  maps = {};
 
   d = function() {
     return console.debug(arguments);
@@ -27,61 +21,61 @@
   };
 
   window.onload = function() {
-    map1 = new L.Map('map1');
-    map1.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maps.osm = new L.Map('map1');
+    maps.osm.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }));
-    map1.setView([lat, lon], zoom);
-    map1.on('dragend', function() {
+    maps.osm.setView([lat, lon], zoom);
+    maps.osm.on('dragend', function() {
       var new_center;
-      new_center = map1.getCenter();
-      map2.setCenter(new google.maps.LatLng(new_center.lat, new_center.lng));
-      map3.setCenter([new_center.lat, new_center.lng]);
-      return map4.setCenter(new DG.GeoPoint(new_center.lng, new_center.lat));
+      new_center = maps.osm.getCenter();
+      maps.google.setCenter(new google.maps.LatLng(new_center.lat, new_center.lng));
+      maps.yandex.setCenter([new_center.lat, new_center.lng]);
+      return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng, new_center.lat));
     });
-    return map1.on('zoomend', function() {
+    return maps.osm.on('zoomend', function() {
       var new_zoom;
-      new_zoom = map1.getZoom();
-      setZoom(map2, new_zoom);
-      setZoom(map3, new_zoom);
-      return setZoom(map4, new_zoom);
+      new_zoom = maps.osm.getZoom();
+      setZoom(maps.google, new_zoom);
+      setZoom(maps.yandex, new_zoom);
+      return setZoom(maps.dgis, new_zoom);
     });
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
-    map2 = new google.maps.Map(document.getElementById('map2'), {
+    maps.google = new google.maps.Map(document.getElementById('map2'), {
       center: new google.maps.LatLng(lat, lon),
       zoom: zoom
     });
-    google.maps.event.addListener(map2, 'dragend', function() {
+    google.maps.event.addListener(maps.google, 'dragend', function() {
       var new_center, new_zoom;
-      new_center = map2.getCenter();
-      new_zoom = map2.getZoom();
-      map1.setView([new_center.lat(), new_center.lng()], new_zoom, {
+      new_center = maps.google.getCenter();
+      new_zoom = maps.google.getZoom();
+      maps.osm.setView([new_center.lat(), new_center.lng()], new_zoom, {
         reset: true
       });
-      map3.setCenter([new_center.lat(), new_center.lng()]);
-      return map4.setCenter(new DG.GeoPoint(new_center.lng(), new_center.lat()));
+      maps.yandex.setCenter([new_center.lat(), new_center.lng()]);
+      return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng(), new_center.lat()));
     });
-    return google.maps.event.addListener(map2, 'zoom_changed', function() {
+    return google.maps.event.addListener(maps.google, 'zoom_changed', function() {
       var new_zoom;
-      new_zoom = map2.getZoom();
-      setZoom(map1, new_zoom);
-      setZoom(map3, new_zoom);
-      return setZoom(map4, new_zoom);
+      new_zoom = maps.google.getZoom();
+      setZoom(maps.osm, new_zoom);
+      setZoom(maps.yandex, new_zoom);
+      return setZoom(maps.dgis, new_zoom);
     });
   });
 
   ymaps.ready(function() {
-    return map3 = new ymaps.Map('map3', {
+    return maps.yandex = new ymaps.Map('map3', {
       center: [lat, lon],
       zoom: zoom
     });
   });
 
   DG.autoload(function() {
-    map4 = new DG.Map('map4');
-    return map4.setCenter(new DG.GeoPoint(lon, lat), zoom);
+    maps.dgis = new DG.Map('map4');
+    return maps.dgis.setCenter(new DG.GeoPoint(lon, lat), zoom);
   });
 
 }).call(this);
