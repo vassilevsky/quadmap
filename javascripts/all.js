@@ -1,5 +1,5 @@
 (function() {
-  var d, lat, lon, map1, map2, map3, map4, zoom;
+  var d, lat, lon, map1, map2, map3, map4, setZoom, zoom;
 
   lat = 54.32;
 
@@ -19,6 +19,13 @@
     return console.debug(arguments);
   };
 
+  setZoom = function(map, zoom) {
+    if (map.getZoom() !== zoom) {
+      d("setting map " + map + " to zoom " + zoom);
+      return map.setZoom(zoom);
+    }
+  };
+
   window.onload = function() {
     map1 = new L.Map('map1');
     map1.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,9 +42,9 @@
     return map1.on('zoomend', function() {
       var new_zoom;
       new_zoom = map1.getZoom();
-      map2.setZoom(new_zoom);
-      map3.setZoom(new_zoom);
-      return map4.setZoom(new_zoom);
+      setZoom(map2, new_zoom);
+      setZoom(map3, new_zoom);
+      return setZoom(map4, new_zoom);
     });
   };
 
@@ -59,9 +66,9 @@
     return google.maps.event.addListener(map2, 'zoom_changed', function() {
       var new_zoom;
       new_zoom = map2.getZoom();
-      map1.setZoom(new_zoom);
-      map3.setZoom(new_zoom);
-      return map4.setZoom(new_zoom);
+      setZoom(map1, new_zoom);
+      setZoom(map3, new_zoom);
+      return setZoom(map4, new_zoom);
     });
   });
 
