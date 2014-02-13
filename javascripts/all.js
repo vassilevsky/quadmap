@@ -1,5 +1,5 @@
 (function() {
-  var lat, lon, map1, map2, map3, map4, zoom;
+  var d, lat, lon, map1, map2, map3, map4, zoom;
 
   lat = 54.32;
 
@@ -14,6 +14,10 @@
   map3 = null;
 
   map4 = null;
+
+  d = function() {
+    return console.debug(arguments);
+  };
 
   window.onload = function() {
     map1 = new L.Map('map1');
