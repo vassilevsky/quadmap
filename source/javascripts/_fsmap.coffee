@@ -8,6 +8,9 @@ map3 = null
 map4 = null
 
 
+d = -> console.debug arguments
+
+
 window.onload = ->
   map1 = new L.Map 'map1'
 
