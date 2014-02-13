@@ -2,10 +2,7 @@ lat = 54.32
 lon = 48.4
 zoom = 14
 
-map1 = null
-map2 = null
-map3 = null
-map4 = null
+maps = {}
 
 
 d = -> console.debug arguments
@@ -18,53 +15,53 @@ setZoom = (map, zoom) ->
 
 
 window.onload = ->
-  map1 = new L.Map 'map1'
+  maps.osm = new L.Map 'map1'
 
-  map1.addLayer new L.TileLayer 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  maps.osm.addLayer new L.TileLayer 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution: '© OpenStreetMap contributors'
 
-  map1.setView [lat, lon], zoom
+  maps.osm.setView [lat, lon], zoom
 
-  map1.on 'dragend', ->
-    new_center = map1.getCenter()
+  maps.osm.on 'dragend', ->
+    new_center = maps.osm.getCenter()
 
-    map2.setCenter new google.maps.LatLng new_center.lat, new_center.lng
-    map3.setCenter [new_center.lat, new_center.lng]
-    map4.setCenter new DG.GeoPoint(new_center.lng, new_center.lat)
+    maps.google.setCenter new google.maps.LatLng new_center.lat, new_center.lng
+    maps.yandex.setCenter [new_center.lat, new_center.lng]
+    maps.dgis.setCenter new DG.GeoPoint new_center.lng, new_center.lat
 
-  map1.on 'zoomend', ->
-    new_zoom = map1.getZoom()
+  maps.osm.on 'zoomend', ->
+    new_zoom = maps.osm.getZoom()
 
-    setZoom map2, new_zoom
-    setZoom map3, new_zoom
-    setZoom map4, new_zoom
+    setZoom maps.google, new_zoom
+    setZoom maps.yandex, new_zoom
+    setZoom maps.dgis, new_zoom
 
 
 google.maps.event.addDomListener window, 'load', ->
-  map2 = new google.maps.Map document.getElementById('map2'),
+  maps.google = new google.maps.Map document.getElementById('map2'),
     center: new google.maps.LatLng lat, lon
     zoom: zoom
 
-  google.maps.event.addListener map2, 'dragend', ->
-    new_center = map2.getCenter()
-    new_zoom = map2.getZoom()
+  google.maps.event.addListener maps.google, 'dragend', ->
+    new_center = maps.google.getCenter()
+    new_zoom = maps.google.getZoom()
 
-    map1.setView [new_center.lat(), new_center.lng()], new_zoom, reset: true
-    map3.setCenter [new_center.lat(), new_center.lng()]
-    map4.setCenter new DG.GeoPoint(new_center.lng(), new_center.lat())
+    maps.osm.setView [new_center.lat(), new_center.lng()], new_zoom, reset: true
+    maps.yandex.setCenter [new_center.lat(), new_center.lng()]
+    maps.dgis.setCenter new DG.GeoPoint new_center.lng(), new_center.lat()
 
-  google.maps.event.addListener map2, 'zoom_changed', ->
-    new_zoom = map2.getZoom()
+  google.maps.event.addListener maps.google, 'zoom_changed', ->
+    new_zoom = maps.google.getZoom()
 
-    setZoom map1, new_zoom
-    setZoom map3, new_zoom
-    setZoom map4, new_zoom
+    setZoom maps.osm, new_zoom
+    setZoom maps.yandex, new_zoom
+    setZoom maps.dgis, new_zoom
 
 
 ymaps.ready ->
-  map3 = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
+  maps.yandex = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
 
 
 DG.autoload ->
-  map4 = new DG.Map 'map4'
-  map4.setCenter new DG.GeoPoint(lon, lat), zoom
+  maps.dgis = new DG.Map 'map4'
+  maps.dgis.setCenter new DG.GeoPoint(lon, lat), zoom
