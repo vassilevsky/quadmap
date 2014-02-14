@@ -1,5 +1,5 @@
 (function() {
-  var d, lat, lon, maps, setZoom, zoom;
+  var d, lat, lon, maps, setCenter, setZoom, zoom;
 
   lat = 54.32;
 
@@ -11,6 +11,27 @@
 
   d = function() {
     return console.debug(arguments);
+  };
+
+  setCenter = function(lat, lon, except_map_name) {
+    if (except_map_name !== 'osm') {
+      d("set osm center to " + lat + ", " + lon);
+      maps.osm.setView([lat, lon], maps.osm.getZoom(), {
+        reset: true
+      });
+    }
+    if (except_map_name !== 'google') {
+      d("set google center to " + lat + ", " + lon);
+      maps.google.setCenter(new google.maps.LatLng(lat, lon));
+    }
+    if (except_map_name !== 'yandex') {
+      d("set yandex center to " + lat + ", " + lon);
+      maps.yandex.setCenter([lat, lon]);
+    }
+    if (except_map_name !== 'dgis') {
+      d("set dgis center to " + lat + ", " + lon);
+      maps.dgis.setCenter(new DG.GeoPoint(lon, lat));
+    }
   };
 
   setZoom = function(source_map_name) {
@@ -36,9 +57,7 @@
     maps.osm.on('dragend', function() {
       var new_center;
       new_center = maps.osm.getCenter();
-      maps.google.setCenter(new google.maps.LatLng(new_center.lat, new_center.lng));
-      maps.yandex.setCenter([new_center.lat, new_center.lng]);
-      return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng, new_center.lat));
+      return setCenter(new_center.lat, new_center.lng, 'osm');
     });
     return maps.osm.on('zoomend', function() {
       return setZoom('osm');
@@ -51,14 +70,9 @@
       zoom: zoom
     });
     google.maps.event.addListener(maps.google, 'dragend', function() {
-      var new_center, new_zoom;
+      var new_center;
       new_center = maps.google.getCenter();
-      new_zoom = maps.google.getZoom();
-      maps.osm.setView([new_center.lat(), new_center.lng()], new_zoom, {
-        reset: true
-      });
-      maps.yandex.setCenter([new_center.lat(), new_center.lng()]);
-      return maps.dgis.setCenter(new DG.GeoPoint(new_center.lng(), new_center.lat()));
+      return setCenter(new_center.lat(), new_center.lng(), 'google');
     });
     return google.maps.event.addListener(maps.google, 'zoom_changed', function() {
       return setZoom('google');
