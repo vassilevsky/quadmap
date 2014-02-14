@@ -8,6 +8,26 @@ maps = {}
 d = -> console.debug arguments
 
 
+setCenter = (lat, lon, except_map_name) ->
+  unless except_map_name is 'osm'
+    d "set osm center to #{lat}, #{lon}"
+    maps.osm.setView [lat, lon], maps.osm.getZoom(), reset: true
+
+  unless except_map_name is 'google'
+    d "set google center to #{lat}, #{lon}"
+    maps.google.setCenter new google.maps.LatLng lat, lon
+
+  unless except_map_name is 'yandex'
+    d "set yandex center to #{lat}, #{lon}"
+    maps.yandex.setCenter [lat, lon]
+
+  unless except_map_name is 'dgis'
+    d "set dgis center to #{lat}, #{lon}"
+    maps.dgis.setCenter new DG.GeoPoint lon, lat
+
+  return
+
+
 setZoom = (source_map_name) ->
   new_zoom = maps[source_map_name].getZoom()
 
@@ -29,10 +49,7 @@ window.onload = ->
 
   maps.osm.on 'dragend', ->
     new_center = maps.osm.getCenter()
-
-    maps.google.setCenter new google.maps.LatLng new_center.lat, new_center.lng
-    maps.yandex.setCenter [new_center.lat, new_center.lng]
-    maps.dgis.setCenter new DG.GeoPoint new_center.lng, new_center.lat
+    setCenter new_center.lat, new_center.lng, 'osm'
 
   maps.osm.on 'zoomend', ->
     setZoom 'osm'
@@ -45,11 +62,7 @@ google.maps.event.addDomListener window, 'load', ->
 
   google.maps.event.addListener maps.google, 'dragend', ->
     new_center = maps.google.getCenter()
-    new_zoom = maps.google.getZoom()
-
-    maps.osm.setView [new_center.lat(), new_center.lng()], new_zoom, reset: true
-    maps.yandex.setCenter [new_center.lat(), new_center.lng()]
-    maps.dgis.setCenter new DG.GeoPoint new_center.lng(), new_center.lat()
+    setCenter new_center.lat(), new_center.lng(), 'google'
 
   google.maps.event.addListener maps.google, 'zoom_changed', ->
     setZoom 'google'
