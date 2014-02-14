@@ -80,9 +80,19 @@
   });
 
   ymaps.ready(function() {
-    return maps.yandex = new ymaps.Map('map3', {
+    maps.yandex = new ymaps.Map('map3', {
       center: [lat, lon],
       zoom: zoom
+    });
+    return maps.yandex.events.add('boundschange', function(event) {
+      var new_center;
+      new_center = event.get('newCenter');
+      if (new_center !== event.get('oldCenter')) {
+        setCenter(new_center[0], new_center[1], 'yandex');
+      }
+      if (event.get('newZoom') !== event.get('oldZoom')) {
+        return setZoom('yandex');
+      }
     });
   });
 
