@@ -9,6 +9,9 @@ d = -> console.debug arguments
 
 
 setCenter = (lat, lon, except_map_name) ->
+  d '====='
+  d "HAVE TO MOVE OTHER MAPS BECAUSE #{except_map_name} HAS MOVED"
+
   unless except_map_name is 'osm'
     d "set osm center to #{lat}, #{lon}"
     maps.osm.setView [lat, lon], maps.osm.getZoom(), reset: true
@@ -29,6 +32,9 @@ setCenter = (lat, lon, except_map_name) ->
 
 
 setZoom = (source_map_name) ->
+  d '====='
+  d "HAVE TO ZOOM OTHER MAPS BECAUSE #{source_map_name} HAS CHANGED ZOOM"
+
   new_zoom = maps[source_map_name].getZoom()
 
   for target_map_name, target_map of maps when target_map_name isnt source_map_name
