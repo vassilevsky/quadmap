@@ -98,7 +98,15 @@
 
   DG.autoload(function() {
     maps.dgis = new DG.Map('map4');
-    return maps.dgis.setCenter(new DG.GeoPoint(lon, lat), zoom);
+    maps.dgis.setCenter(new DG.GeoPoint(lon, lat), zoom);
+    maps.dgis.addEventListener('map4', 'DgDragStop', function() {
+      var new_center;
+      new_center = maps.dgis.getCenter();
+      return setCenter(new_center.lat, new_center.lon, 'dgis');
+    });
+    return maps.dgis.addEventListener('map4', 'DgZoomChange', function() {
+      return setZoom('dgis');
+    });
   });
 
 }).call(this);
