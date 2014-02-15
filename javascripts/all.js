@@ -14,6 +14,8 @@
   };
 
   setCenter = function(lat, lon, except_map_name) {
+    d('=====');
+    d("HAVE TO MOVE OTHER MAPS BECAUSE " + except_map_name + " HAS MOVED");
     if (except_map_name !== 'osm') {
       d("set osm center to " + lat + ", " + lon);
       maps.osm.setView([lat, lon], maps.osm.getZoom(), {
@@ -36,6 +38,8 @@
 
   setZoom = function(source_map_name) {
     var new_zoom, target_map, target_map_name;
+    d('=====');
+    d("HAVE TO ZOOM OTHER MAPS BECAUSE " + source_map_name + " HAS CHANGED ZOOM");
     new_zoom = maps[source_map_name].getZoom();
     for (target_map_name in maps) {
       target_map = maps[target_map_name];
