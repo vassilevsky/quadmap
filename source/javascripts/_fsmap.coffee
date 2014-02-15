@@ -83,3 +83,10 @@ ymaps.ready ->
 DG.autoload ->
   maps.dgis = new DG.Map 'map4'
   maps.dgis.setCenter new DG.GeoPoint(lon, lat), zoom
+
+  maps.dgis.addEventListener 'map4', 'DgDragStop', ->
+    new_center = maps.dgis.getCenter()
+    setCenter new_center.lat, new_center.lon, 'dgis'
+
+  maps.dgis.addEventListener 'map4', 'DgZoomChange', ->
+    setZoom 'dgis'
