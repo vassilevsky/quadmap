@@ -8,6 +8,9 @@ maps = {}
 d = -> console.debug arguments
 
 
+google_zoom_listener = null
+
+
 setCenter = (lat, lon, source_map_name) ->
   d '====='
   d "HAVE TO MOVE OTHER MAPS BECAUSE #{source_map_name} HAS MOVED"
@@ -49,7 +52,9 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'google'
     unless maps.google.getZoom() == new_zoom
       d "set google zoom to #{new_zoom}"
+      google.maps.event.removeListener google_zoom_listener
       maps.google.setZoom new_zoom
+      google_zoom_listener = google.maps.event.addListener maps.google, 'zoom_changed', -> setZoom 'google'
 
   unless source_map_name is 'yandex'
     unless maps.yandex.getZoom() == new_zoom
@@ -89,7 +94,7 @@ google.maps.event.addDomListener window, 'load', ->
     new_center = maps.google.getCenter()
     setCenter new_center.lat(), new_center.lng(), 'google'
 
-  google.maps.event.addListener maps.google, 'zoom_changed', ->
+  google_zoom_listener = google.maps.event.addListener maps.google, 'zoom_changed', ->
     setZoom 'google'
 
 
