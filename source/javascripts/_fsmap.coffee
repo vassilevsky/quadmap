@@ -8,25 +8,25 @@ maps = {}
 d = -> console.debug arguments
 
 
-setCenter = (lat, lon, except_map_name) ->
+setCenter = (lat, lon, source_map_name) ->
   d '====='
-  d "HAVE TO MOVE OTHER MAPS BECAUSE #{except_map_name} HAS MOVED"
+  d "HAVE TO MOVE OTHER MAPS BECAUSE #{source_map_name} HAS MOVED"
 
-  unless except_map_name is 'osm'
+  unless source_map_name is 'osm'
     d "set osm center to #{lat}, #{lon}"
     maps.osm.setView [lat, lon], maps.osm.getZoom(), reset: true
 
-  unless except_map_name is 'google'
+  unless source_map_name is 'google'
     d "set google center to #{lat}, #{lon}"
     maps.google.setCenter new google.maps.LatLng lat, lon
 
-  unless except_map_name is 'yandex'
+  unless source_map_name is 'yandex'
     d "set yandex center to #{lat}, #{lon}"
     maps.yandex.events.remove 'boundschange', yandex_change_handler
     maps.yandex.setCenter [lat, lon]
     maps.yandex.events.add 'boundschange', yandex_change_handler
 
-  unless except_map_name is 'dgis'
+  unless source_map_name is 'dgis'
     d "set dgis center to #{lat}, #{lon}"
     dgis_zoom_observer.disable()
     maps.dgis.setCenter new DG.GeoPoint lon, lat
