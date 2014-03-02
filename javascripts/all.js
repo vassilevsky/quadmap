@@ -66,7 +66,9 @@
     if (source_map_name !== 'yandex') {
       if (maps.yandex.getZoom() !== new_zoom) {
         d("set yandex zoom to " + new_zoom);
+        maps.yandex.events.remove('boundschange', yandex_change_handler);
         maps.yandex.setZoom(new_zoom);
+        maps.yandex.events.add('boundschange', yandex_change_handler);
       }
     }
     if (source_map_name !== 'dgis') {
