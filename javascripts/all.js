@@ -1,5 +1,5 @@
 (function() {
-  var d, dgis_zoom_observer, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
+  var d, dgis_zoom_observer, google_zoom_listener, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
 
   lat = 54.32;
 
@@ -12,6 +12,8 @@
   d = function() {
     return console.debug(arguments);
   };
+
+  google_zoom_listener = null;
 
   setCenter = function(lat, lon, source_map_name) {
     d('=====');
@@ -54,7 +56,11 @@
     if (source_map_name !== 'google') {
       if (maps.google.getZoom() !== new_zoom) {
         d("set google zoom to " + new_zoom);
+        google.maps.event.removeListener(google_zoom_listener);
         maps.google.setZoom(new_zoom);
+        google_zoom_listener = google.maps.event.addListener(maps.google, 'zoom_changed', function() {
+          return setZoom('google');
+        });
       }
     }
     if (source_map_name !== 'yandex') {
@@ -97,7 +103,7 @@
       new_center = maps.google.getCenter();
       return setCenter(new_center.lat(), new_center.lng(), 'google');
     });
-    return google.maps.event.addListener(maps.google, 'zoom_changed', function() {
+    return google_zoom_listener = google.maps.event.addListener(maps.google, 'zoom_changed', function() {
       return setZoom('google');
     });
   });
