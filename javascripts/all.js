@@ -1,5 +1,5 @@
 (function() {
-  var d, lat, lon, maps, setCenter, setZoom, zoom;
+  var d, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
 
   lat = 54.32;
 
@@ -28,7 +28,9 @@
     }
     if (except_map_name !== 'yandex') {
       d("set yandex center to " + lat + ", " + lon);
+      maps.yandex.events.remove('boundschange', yandex_change_handler);
       maps.yandex.setCenter([lat, lon]);
+      maps.yandex.events.add('boundschange', yandex_change_handler);
     }
     if (except_map_name !== 'dgis') {
       d("set dgis center to " + lat + ", " + lon);
@@ -83,21 +85,23 @@
     });
   });
 
+  yandex_change_handler = function(event) {
+    var new_center;
+    new_center = event.get('newCenter');
+    if (new_center !== event.get('oldCenter')) {
+      setCenter(new_center[0], new_center[1], 'yandex');
+    }
+    if (event.get('newZoom') !== event.get('oldZoom')) {
+      return setZoom('yandex');
+    }
+  };
+
   ymaps.ready(function() {
     maps.yandex = new ymaps.Map('map3', {
       center: [lat, lon],
       zoom: zoom
     });
-    return maps.yandex.events.add('boundschange', function(event) {
-      var new_center;
-      new_center = event.get('newCenter');
-      if (new_center !== event.get('oldCenter')) {
-        setCenter(new_center[0], new_center[1], 'yandex');
-      }
-      if (event.get('newZoom') !== event.get('oldZoom')) {
-        return setZoom('yandex');
-      }
-    });
+    return maps.yandex.events.add('boundschange', yandex_change_handler);
   });
 
   DG.autoload(function() {
