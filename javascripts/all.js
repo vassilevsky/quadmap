@@ -74,7 +74,9 @@
     if (source_map_name !== 'dgis') {
       if (maps.dgis.getZoom() !== new_zoom) {
         d("set dgis zoom to " + new_zoom);
+        dgis_zoom_observer.disable();
         maps.dgis.setZoom(new_zoom);
+        dgis_zoom_observer.enable();
       }
     }
   };
