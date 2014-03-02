@@ -59,7 +59,9 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'yandex'
     unless maps.yandex.getZoom() == new_zoom
       d "set yandex zoom to #{new_zoom}"
+      maps.yandex.events.remove 'boundschange', yandex_change_handler
       maps.yandex.setZoom new_zoom
+      maps.yandex.events.add 'boundschange', yandex_change_handler
 
   unless source_map_name is 'dgis'
     unless maps.dgis.getZoom() == new_zoom
