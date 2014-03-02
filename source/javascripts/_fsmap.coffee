@@ -66,7 +66,9 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'dgis'
     unless maps.dgis.getZoom() == new_zoom
       d "set dgis zoom to #{new_zoom}"
+      dgis_zoom_observer.disable()
       maps.dgis.setZoom new_zoom
+      dgis_zoom_observer.enable()
 
   return
 
