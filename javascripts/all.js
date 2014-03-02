@@ -13,26 +13,26 @@
     return console.debug(arguments);
   };
 
-  setCenter = function(lat, lon, except_map_name) {
+  setCenter = function(lat, lon, source_map_name) {
     d('=====');
-    d("HAVE TO MOVE OTHER MAPS BECAUSE " + except_map_name + " HAS MOVED");
-    if (except_map_name !== 'osm') {
+    d("HAVE TO MOVE OTHER MAPS BECAUSE " + source_map_name + " HAS MOVED");
+    if (source_map_name !== 'osm') {
       d("set osm center to " + lat + ", " + lon);
       maps.osm.setView([lat, lon], maps.osm.getZoom(), {
         reset: true
       });
     }
-    if (except_map_name !== 'google') {
+    if (source_map_name !== 'google') {
       d("set google center to " + lat + ", " + lon);
       maps.google.setCenter(new google.maps.LatLng(lat, lon));
     }
-    if (except_map_name !== 'yandex') {
+    if (source_map_name !== 'yandex') {
       d("set yandex center to " + lat + ", " + lon);
       maps.yandex.events.remove('boundschange', yandex_change_handler);
       maps.yandex.setCenter([lat, lon]);
       maps.yandex.events.add('boundschange', yandex_change_handler);
     }
-    if (except_map_name !== 'dgis') {
+    if (source_map_name !== 'dgis') {
       d("set dgis center to " + lat + ", " + lon);
       dgis_zoom_observer.disable();
       maps.dgis.setCenter(new DG.GeoPoint(lon, lat));
