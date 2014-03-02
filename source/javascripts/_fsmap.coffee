@@ -22,7 +22,9 @@ setCenter = (lat, lon, except_map_name) ->
 
   unless except_map_name is 'yandex'
     d "set yandex center to #{lat}, #{lon}"
+    maps.yandex.events.remove 'boundschange', yandex_change_handler
     maps.yandex.setCenter [lat, lon]
+    maps.yandex.events.add 'boundschange', yandex_change_handler
 
   unless except_map_name is 'dgis'
     d "set dgis center to #{lat}, #{lon}"
@@ -74,16 +76,19 @@ google.maps.event.addDomListener window, 'load', ->
     setZoom 'google'
 
 
+yandex_change_handler = (event) ->
+  new_center = event.get('newCenter')
+
+  if new_center != event.get('oldCenter')
+    setCenter new_center[0], new_center[1], 'yandex'
+
+  if event.get('newZoom') != event.get('oldZoom')
+    setZoom 'yandex'
+
 ymaps.ready ->
   maps.yandex = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
-  maps.yandex.events.add 'boundschange', (event) ->
-    new_center = event.get('newCenter')
+  maps.yandex.events.add 'boundschange', yandex_change_handler
 
-    if new_center != event.get('oldCenter')
-      setCenter new_center[0], new_center[1], 'yandex'
-
-    if event.get('newZoom') != event.get('oldZoom')
-      setZoom 'yandex'
 
 
 DG.autoload ->
