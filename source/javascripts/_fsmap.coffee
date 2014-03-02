@@ -41,10 +41,25 @@ setZoom = (source_map_name) ->
 
   new_zoom = maps[source_map_name].getZoom()
 
-  for target_map_name, target_map of maps when target_map_name isnt source_map_name
-    if target_map.getZoom() isnt new_zoom
-      d "set #{target_map_name} zoom to #{new_zoom}"
-      target_map.setZoom new_zoom
+  unless source_map_name is 'osm'
+    unless maps.osm.getZoom() == new_zoom
+      d "set osm zoom to #{new_zoom}"
+      maps.osm.setZoom new_zoom
+
+  unless source_map_name is 'google'
+    unless maps.google.getZoom() == new_zoom
+      d "set google zoom to #{new_zoom}"
+      maps.google.setZoom new_zoom
+
+  unless source_map_name is 'yandex'
+    unless maps.yandex.getZoom() == new_zoom
+      d "set yandex zoom to #{new_zoom}"
+      maps.yandex.setZoom new_zoom
+
+  unless source_map_name is 'dgis'
+    unless maps.dgis.getZoom() == new_zoom
+      d "set dgis zoom to #{new_zoom}"
+      maps.dgis.setZoom new_zoom
 
   return
 
