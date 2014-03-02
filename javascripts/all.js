@@ -1,5 +1,5 @@
 (function() {
-  var d, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
+  var d, dgis_zoom_observer, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
 
   lat = 54.32;
 
@@ -34,7 +34,9 @@
     }
     if (except_map_name !== 'dgis') {
       d("set dgis center to " + lat + ", " + lon);
+      dgis_zoom_observer.disable();
       maps.dgis.setCenter(new DG.GeoPoint(lon, lat));
+      dgis_zoom_observer.enable();
     }
   };
 
@@ -104,6 +106,8 @@
     return maps.yandex.events.add('boundschange', yandex_change_handler);
   });
 
+  dgis_zoom_observer = null;
+
   DG.autoload(function() {
     maps.dgis = new DG.Map('map4');
     maps.dgis.setCenter(new DG.GeoPoint(lon, lat), zoom);
@@ -112,7 +116,7 @@
       new_center = maps.dgis.getCenter();
       return setCenter(new_center.lat, new_center.lon, 'dgis');
     });
-    return maps.dgis.addEventListener('map4', 'DgZoomChange', function() {
+    return dgis_zoom_observer = maps.dgis.addEventListener('map4', 'DgZoomChange', function() {
       return setZoom('dgis');
     });
   });
