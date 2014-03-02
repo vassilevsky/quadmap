@@ -41,17 +41,32 @@
   };
 
   setZoom = function(source_map_name) {
-    var new_zoom, target_map, target_map_name;
+    var new_zoom;
     d('=====');
     d("HAVE TO ZOOM OTHER MAPS BECAUSE " + source_map_name + " HAS CHANGED ZOOM");
     new_zoom = maps[source_map_name].getZoom();
-    for (target_map_name in maps) {
-      target_map = maps[target_map_name];
-      if (target_map_name !== source_map_name) {
-        if (target_map.getZoom() !== new_zoom) {
-          d("set " + target_map_name + " zoom to " + new_zoom);
-          target_map.setZoom(new_zoom);
-        }
+    if (source_map_name !== 'osm') {
+      if (maps.osm.getZoom() !== new_zoom) {
+        d("set osm zoom to " + new_zoom);
+        maps.osm.setZoom(new_zoom);
+      }
+    }
+    if (source_map_name !== 'google') {
+      if (maps.google.getZoom() !== new_zoom) {
+        d("set google zoom to " + new_zoom);
+        maps.google.setZoom(new_zoom);
+      }
+    }
+    if (source_map_name !== 'yandex') {
+      if (maps.yandex.getZoom() !== new_zoom) {
+        d("set yandex zoom to " + new_zoom);
+        maps.yandex.setZoom(new_zoom);
+      }
+    }
+    if (source_map_name !== 'dgis') {
+      if (maps.dgis.getZoom() !== new_zoom) {
+        d("set dgis zoom to " + new_zoom);
+        maps.dgis.setZoom(new_zoom);
       }
     }
   };
