@@ -54,7 +54,9 @@
     if (source_map_name !== 'osm') {
       if (maps.osm.getZoom() !== new_zoom) {
         d("set osm zoom to " + new_zoom);
+        maps.osm.off('zoomend', osm_zoom_handler);
         maps.osm.setZoom(new_zoom);
+        maps.osm.on('zoomend', osm_zoom_handler);
       }
     }
     if (source_map_name !== 'google') {
@@ -85,6 +87,10 @@
     }
   };
 
+  osm_zoom_handler = function() {
+    return setZoom('osm');
+  };
+
   window.onload = function() {
     maps.osm = new L.Map('map1');
     maps.osm.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -96,9 +102,7 @@
       new_center = maps.osm.getCenter();
       return setCenter(new_center.lat, new_center.lng, 'osm');
     });
-    return maps.osm.on('zoomend', function() {
-      return setZoom('osm');
-    });
+    return maps.osm.on('zoomend', osm_zoom_handler);
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
