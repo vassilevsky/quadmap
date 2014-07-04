@@ -15,7 +15,6 @@ maps = {}
 
 google_zoom_listener = null
 
-
 setCenter = (lat, lon, source_map_name) ->
   d '====='
   d "HAVE TO MOVE OTHER MAPS BECAUSE #{source_map_name} HAS MOVED"
@@ -52,7 +51,9 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'osm'
     unless maps.osm.getZoom() == new_zoom
       d "set osm zoom to #{new_zoom}"
+      maps.osm.off 'zoomend', osm_zoom_handler
       maps.osm.setZoom new_zoom
+      maps.osm.on 'zoomend', osm_zoom_handler
 
   unless source_map_name is 'google'
     unless maps.google.getZoom() == new_zoom
@@ -78,6 +79,8 @@ setZoom = (source_map_name) ->
   return
 
 
+osm_zoom_handler = -> setZoom 'osm'
+
 window.onload = ->
   maps.osm = new L.Map 'map1'
 
@@ -90,8 +93,7 @@ window.onload = ->
     new_center = maps.osm.getCenter()
     setCenter new_center.lat, new_center.lng, 'osm'
 
-  maps.osm.on 'zoomend', ->
-    setZoom 'osm'
+  maps.osm.on 'zoomend', osm_zoom_handler
 
 
 google.maps.event.addDomListener window, 'load', ->
