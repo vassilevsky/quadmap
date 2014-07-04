@@ -1,12 +1,17 @@
-lat = 54.32
-lon = 48.4
-zoom = 14
-
-maps = {}
-
-
 d = -> console.debug arguments
 
+if window.location.hash.length > 1
+  [zoom, lat, lon] = window.location.hash.replace('#', '').split('/')
+
+  zoom = parseInt(zoom)
+  lat = parseFloat(lat)
+  lon = parseFloat(lon)
+
+  d "received initial zoom #{zoom} and coordinates #{lat}, #{lon} from URL"
+else
+  [zoom, lat, lon] = [14, 54.32, 48.4]
+
+maps = {}
 
 google_zoom_listener = null
 
