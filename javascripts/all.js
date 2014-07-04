@@ -1,17 +1,21 @@
 (function() {
-  var d, dgis_zoom_observer, google_zoom_listener, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom;
-
-  lat = 54.32;
-
-  lon = 48.4;
-
-  zoom = 14;
-
-  maps = {};
+  var d, dgis_zoom_observer, google_zoom_listener, lat, lon, maps, osm_zoom_handler, setCenter, setZoom, yandex_change_handler, zoom, _ref, _ref1;
 
   d = function() {
     return console.debug(arguments);
   };
+
+  if (window.location.hash.length > 1) {
+    _ref = window.location.hash.replace('#', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
+    zoom = parseInt(zoom);
+    lat = parseFloat(lat);
+    lon = parseFloat(lon);
+    d("received initial zoom " + zoom + " and coordinates " + lat + ", " + lon + " from URL");
+  } else {
+    _ref1 = [14, 54.32, 48.4], zoom = _ref1[0], lat = _ref1[1], lon = _ref1[2];
+  }
+
+  maps = {};
 
   google_zoom_listener = null;
 
