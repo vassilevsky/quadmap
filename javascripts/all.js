@@ -1,5 +1,74 @@
 (function() {
-  var d, dgis_zoom_observer, google_zoom_listener, lat, lon, maps, osm_zoom_handler, setCenter, setZoom, yandex_change_handler, zoom, _ref, _ref1;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  this.OpenStreetMap = (function() {
+    OpenStreetMap.prototype._map = null;
+
+    OpenStreetMap.prototype._centerChangeHandler = null;
+
+    OpenStreetMap.prototype._zoomChangeHandler = null;
+
+    function OpenStreetMap(id, lat, lon, zoom) {
+      this._onZoomChange = __bind(this._onZoomChange, this);
+      this._onCenterChange = __bind(this._onCenterChange, this);
+      this._map = new L.Map(id);
+      this._map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© Участники OpenStreetMap'
+      }));
+      this._map.setView([lat, lon], zoom);
+    }
+
+    OpenStreetMap.prototype.setCenterChangeHandler = function(fn) {
+      this._centerChangeHandler = fn;
+      return this._map.on('dragend', this._onCenterChange);
+    };
+
+    OpenStreetMap.prototype.setZoomChangeHandler = function(fn) {
+      this._zoomChangeHandler = fn;
+      return this._map.on('zoomend', this._onZoomChange);
+    };
+
+    OpenStreetMap.prototype.getCenter = function() {
+      var center;
+      center = this._map.getCenter();
+      return [center.lat, center.lng];
+    };
+
+    OpenStreetMap.prototype.getZoom = function() {
+      return this._map.getZoom();
+    };
+
+    OpenStreetMap.prototype.setCenter = function(lat, lon) {
+      this._map.off('dragend', this._onCenterChange);
+      this._map.setView([lat, lon], this._map.getZoom(), {
+        reset: true
+      });
+      return this._map.on('dragend', this._onCenterChange);
+    };
+
+    OpenStreetMap.prototype.setZoom = function(zoom) {
+      this._map.off('zoomend', this._onZoomChange);
+      this._map.setZoom(zoom);
+      return this._map.on('zoomend', this._onZoomChange);
+    };
+
+    OpenStreetMap.prototype._onCenterChange = function() {
+      var center;
+      center = this._map.getCenter();
+      return typeof this._centerChangeHandler === "function" ? this._centerChangeHandler(center.lat, center.lng) : void 0;
+    };
+
+    OpenStreetMap.prototype._onZoomChange = function() {
+      return typeof this._zoomChangeHandler === "function" ? this._zoomChangeHandler(this._map.getZoom()) : void 0;
+    };
+
+    return OpenStreetMap;
+
+  })();
+
+}).call(this);
+(function() {
+  var d, dgis_zoom_observer, google_zoom_listener, lat, lon, maps, setCenter, setZoom, yandex_change_handler, zoom, _ref, _ref1;
 
   d = function() {
     return console.debug(arguments);
@@ -24,9 +93,7 @@
     d("HAVE TO MOVE OTHER MAPS BECAUSE " + source_map_name + " HAS MOVED");
     if (source_map_name !== 'osm') {
       d("set osm center to " + lat + ", " + lon);
-      maps.osm.setView([lat, lon], maps.osm.getZoom(), {
-        reset: true
-      });
+      maps.osm.setCenter(lat, lon);
     }
     if (source_map_name !== 'google') {
       d("set google center to " + lat + ", " + lon);
@@ -54,9 +121,7 @@
     if (source_map_name !== 'osm') {
       if (maps.osm.getZoom() !== new_zoom) {
         d("set osm zoom to " + new_zoom);
-        maps.osm.off('zoomend', osm_zoom_handler);
         maps.osm.setZoom(new_zoom);
-        maps.osm.on('zoomend', osm_zoom_handler);
       }
     }
     if (source_map_name !== 'google') {
@@ -87,22 +152,18 @@
     }
   };
 
-  osm_zoom_handler = function() {
-    return setZoom('osm');
-  };
-
   window.onload = function() {
-    maps.osm = new L.Map('map1');
-    maps.osm.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }));
-    maps.osm.setView([lat, lon], zoom);
-    maps.osm.on('dragend', function() {
-      var new_center;
-      new_center = maps.osm.getCenter();
-      return setCenter(new_center.lat, new_center.lng, 'osm');
-    });
-    return maps.osm.on('zoomend', osm_zoom_handler);
+    maps.osm = new OpenStreetMap('map1', lat, lon, zoom);
+    maps.osm.setCenterChangeHandler((function(_this) {
+      return function(lat, lon) {
+        return setCenter(lat, lon, 'osm');
+      };
+    })(this));
+    return maps.osm.setZoomChangeHandler((function(_this) {
+      return function(zoom) {
+        return setZoom('osm');
+      };
+    })(this));
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
