@@ -21,7 +21,7 @@ setCenter = (lat, lon, source_map_name) ->
 
   unless source_map_name is 'osm'
     d "set osm center to #{lat}, #{lon}"
-    maps.osm.setView [lat, lon], maps.osm.getZoom(), reset: true
+    maps.osm.setCenter(lat, lon)
 
   unless source_map_name is 'google'
     d "set google center to #{lat}, #{lon}"
@@ -51,9 +51,7 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'osm'
     unless maps.osm.getZoom() == new_zoom
       d "set osm zoom to #{new_zoom}"
-      maps.osm.off 'zoomend', osm_zoom_handler
-      maps.osm.setZoom new_zoom
-      maps.osm.on 'zoomend', osm_zoom_handler
+      maps.osm.setZoom(new_zoom)
 
   unless source_map_name is 'google'
     unless maps.google.getZoom() == new_zoom
@@ -79,21 +77,14 @@ setZoom = (source_map_name) ->
   return
 
 
-osm_zoom_handler = -> setZoom 'osm'
-
 window.onload = ->
-  maps.osm = new L.Map 'map1'
+  maps.osm = new OpenStreetMap('map1', lat, lon, zoom)
 
-  maps.osm.addLayer new L.TileLayer 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '© OpenStreetMap contributors'
+  maps.osm.setCenterChangeHandler (lat, lon) =>
+    setCenter(lat, lon, 'osm')
 
-  maps.osm.setView [lat, lon], zoom
-
-  maps.osm.on 'dragend', ->
-    new_center = maps.osm.getCenter()
-    setCenter new_center.lat, new_center.lng, 'osm'
-
-  maps.osm.on 'zoomend', osm_zoom_handler
+  maps.osm.setZoomChangeHandler (zoom) =>
+    setZoom('osm')
 
 
 google.maps.event.addDomListener window, 'load', ->
