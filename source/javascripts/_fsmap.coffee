@@ -13,8 +13,6 @@ else
 
 maps = {}
 
-google_zoom_listener = null
-
 setCenter = (lat, lon, source_map_name) ->
   d '====='
   d "HAVE TO MOVE OTHER MAPS BECAUSE #{source_map_name} HAS MOVED"
@@ -25,7 +23,7 @@ setCenter = (lat, lon, source_map_name) ->
 
   unless source_map_name is 'google'
     d "set google center to #{lat}, #{lon}"
-    maps.google.setCenter new google.maps.LatLng lat, lon
+    maps.google.setCenter(lat, lon)
 
   unless source_map_name is 'yandex'
     d "set yandex center to #{lat}, #{lon}"
@@ -56,9 +54,7 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'google'
     unless maps.google.getZoom() == new_zoom
       d "set google zoom to #{new_zoom}"
-      google.maps.event.removeListener google_zoom_listener
-      maps.google.setZoom new_zoom
-      google_zoom_listener = google.maps.event.addListener maps.google, 'zoom_changed', -> setZoom 'google'
+      maps.google.setZoom(new_zoom)
 
   unless source_map_name is 'yandex'
     unless maps.yandex.getZoom() == new_zoom
@@ -88,16 +84,13 @@ window.onload = ->
 
 
 google.maps.event.addDomListener window, 'load', ->
-  maps.google = new google.maps.Map document.getElementById('map2'),
-    center: new google.maps.LatLng lat, lon
-    zoom: zoom
+  maps.google = new GoogleMaps('map2', lat, lon, zoom)
 
-  google.maps.event.addListener maps.google, 'dragend', ->
-    new_center = maps.google.getCenter()
-    setCenter new_center.lat(), new_center.lng(), 'google'
+  maps.google.setCenterChangeHandler (lat, lon) =>
+    setCenter(lat, lon, 'google')
 
-  google_zoom_listener = google.maps.event.addListener maps.google, 'zoom_changed', ->
-    setZoom 'google'
+  maps.google.setZoomChangeHandler (zoom) =>
+    setZoom('google')
 
 
 yandex_change_handler = (event) ->
