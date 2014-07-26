@@ -27,9 +27,7 @@ setCenter = (lat, lon, source_map_name) ->
 
   unless source_map_name is 'yandex'
     d "set yandex center to #{lat}, #{lon}"
-    maps.yandex.events.remove 'boundschange', yandex_change_handler
-    maps.yandex.setCenter [lat, lon]
-    maps.yandex.events.add 'boundschange', yandex_change_handler
+    maps.yandex.setCenter(lat, lon)
 
   unless source_map_name is 'dgis'
     d "set dgis center to #{lat}, #{lon}"
@@ -59,9 +57,7 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'yandex'
     unless maps.yandex.getZoom() == new_zoom
       d "set yandex zoom to #{new_zoom}"
-      maps.yandex.events.remove 'boundschange', yandex_change_handler
-      maps.yandex.setZoom new_zoom
-      maps.yandex.events.add 'boundschange', yandex_change_handler
+      maps.yandex.setZoom(new_zoom)
 
   unless source_map_name is 'dgis'
     unless maps.dgis.getZoom() == new_zoom
@@ -93,18 +89,14 @@ google.maps.event.addDomListener window, 'load', ->
     setZoom('google')
 
 
-yandex_change_handler = (event) ->
-  new_center = event.get('newCenter')
-
-  if new_center != event.get('oldCenter')
-    setCenter new_center[0], new_center[1], 'yandex'
-
-  if event.get('newZoom') != event.get('oldZoom')
-    setZoom 'yandex'
-
 ymaps.ready ->
-  maps.yandex = new ymaps.Map 'map3', center: [lat, lon], zoom: zoom
-  maps.yandex.events.add 'boundschange', yandex_change_handler
+  maps.yandex = new YandexMaps('map3', lat, lon, zoom)
+
+  maps.yandex.setCenterChangeHandler (lat, lon) =>
+    setCenter(lat, lon, 'yandex')
+
+  maps.yandex.setZoomChangeHandler (zoom) =>
+    setZoom('yandex')
 
 
 dgis_zoom_observer = null
