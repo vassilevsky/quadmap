@@ -31,9 +31,7 @@ setCenter = (lat, lon, source_map_name) ->
 
   unless source_map_name is 'dgis'
     d "set dgis center to #{lat}, #{lon}"
-    dgis_zoom_observer.disable()
-    maps.dgis.setCenter new DG.GeoPoint lon, lat
-    dgis_zoom_observer.enable()
+    maps.dgis.setCenter(lat, lon)
 
   return
 
@@ -62,9 +60,7 @@ setZoom = (source_map_name) ->
   unless source_map_name is 'dgis'
     unless maps.dgis.getZoom() == new_zoom
       d "set dgis zoom to #{new_zoom}"
-      dgis_zoom_observer.disable()
-      maps.dgis.setZoom new_zoom
-      dgis_zoom_observer.enable()
+      maps.dgis.setZoom(new_zoom)
 
   return
 
@@ -99,15 +95,11 @@ ymaps.ready ->
     setZoom('yandex')
 
 
-dgis_zoom_observer = null
-
 DG.autoload ->
-  maps.dgis = new DG.Map 'map4'
-  maps.dgis.setCenter new DG.GeoPoint(lon, lat), zoom
+  maps.dgis = new DoubleGisMap('map4', lat, lon, zoom)
 
-  maps.dgis.addEventListener 'map4', 'DgDragStop', ->
-    new_center = maps.dgis.getCenter()
-    setCenter new_center.lat, new_center.lon, 'dgis'
+  maps.dgis.setCenterChangeHandler (lat, lon) ->
+    setCenter(lat, lon, 'dgis')
 
-  dgis_zoom_observer = maps.dgis.addEventListener 'map4', 'DgZoomChange', ->
-    setZoom 'dgis'
+  maps.dgis.setZoomChangeHandler (zoom) ->
+    setZoom('dgis')
