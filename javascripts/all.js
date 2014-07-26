@@ -244,13 +244,13 @@
     };
 
     OpenStreetMap.prototype._onCenterChange = function() {
-      var center;
-      center = this._map.getCenter();
-      return typeof this._centerChangeHandler === "function" ? this._centerChangeHandler(center.lat, center.lng) : void 0;
+      var lat, lon, _ref;
+      _ref = this.getCenter(), lat = _ref[0], lon = _ref[1];
+      return typeof this._centerChangeHandler === "function" ? this._centerChangeHandler(lat, lon) : void 0;
     };
 
     OpenStreetMap.prototype._onZoomChange = function() {
-      return typeof this._zoomChangeHandler === "function" ? this._zoomChangeHandler(this._map.getZoom()) : void 0;
+      return typeof this._zoomChangeHandler === "function" ? this._zoomChangeHandler(this.getZoom()) : void 0;
     };
 
     return OpenStreetMap;
