@@ -23,12 +23,12 @@
 
     GoogleMaps.prototype.setCenterChangeHandler = function(fn) {
       this._centerChangeHandler = fn;
-      return this._centerChangeListener = google.maps.event.addListener(this._map, 'dragend', this._onCenterChange);
+      return this._activateCenterChangeListener();
     };
 
     GoogleMaps.prototype.setZoomChangeHandler = function(fn) {
       this._zoomChangeHandler = fn;
-      return this._zoomChangeListener = google.maps.event.addListener(this._map, 'zoom_changed', this._onZoomChange);
+      return this._activateZoomChangeListener();
     };
 
     GoogleMaps.prototype.getCenter = function() {
@@ -42,15 +42,31 @@
     };
 
     GoogleMaps.prototype.setCenter = function(lat, lon) {
-      google.maps.event.removeListener(this._centerChangeListener);
+      this._deactivateCenterChangeListener();
       this._map.setCenter(new google.maps.LatLng(lat, lon));
-      return this._centerChangeListener = google.maps.event.addListener(this._map, 'dragend', this._onCenterChange);
+      return this._activateCenterChangeListener();
     };
 
     GoogleMaps.prototype.setZoom = function(zoom) {
-      google.maps.event.removeListener(this._zoomChangeListener);
+      this._deactivateZoomChangeListener();
       this._map.setZoom(zoom);
+      return this._activateZoomChangeListener();
+    };
+
+    GoogleMaps.prototype._activateCenterChangeListener = function() {
+      return this._centerChangeListener = google.maps.event.addListener(this._map, 'dragend', this._onCenterChange);
+    };
+
+    GoogleMaps.prototype._deactivateCenterChangeListener = function() {
+      return google.maps.event.removeListener(this._centerChangeListener);
+    };
+
+    GoogleMaps.prototype._activateZoomChangeListener = function() {
       return this._zoomChangeListener = google.maps.event.addListener(this._map, 'zoom_changed', this._onZoomChange);
+    };
+
+    GoogleMaps.prototype._deactivateZoomChangeListener = function() {
+      return google.maps.event.removeListener(this._zoomChangeListener);
     };
 
     GoogleMaps.prototype._onCenterChange = function() {

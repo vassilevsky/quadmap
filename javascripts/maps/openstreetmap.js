@@ -20,12 +20,12 @@
 
     OpenStreetMap.prototype.setCenterChangeHandler = function(fn) {
       this._centerChangeHandler = fn;
-      return this._map.on('dragend', this._onCenterChange);
+      return this._activateCenterChangeHandler();
     };
 
     OpenStreetMap.prototype.setZoomChangeHandler = function(fn) {
       this._zoomChangeHandler = fn;
-      return this._map.on('zoomend', this._onZoomChange);
+      return this._activateZoomChangeHandler();
     };
 
     OpenStreetMap.prototype.getCenter = function() {
@@ -39,17 +39,33 @@
     };
 
     OpenStreetMap.prototype.setCenter = function(lat, lon) {
-      this._map.off('dragend', this._onCenterChange);
+      this._deactivateCenterChangeHandler();
       this._map.setView([lat, lon], this._map.getZoom(), {
         reset: true
       });
-      return this._map.on('dragend', this._onCenterChange);
+      return this._activateCenterChangeHandler();
     };
 
     OpenStreetMap.prototype.setZoom = function(zoom) {
-      this._map.off('zoomend', this._onZoomChange);
+      this._deactivateZoomChangeHandler();
       this._map.setZoom(zoom);
+      return this._activateZoomChangeHandler();
+    };
+
+    OpenStreetMap.prototype._activateCenterChangeHandler = function() {
+      return this._map.on('dragend', this._onCenterChange);
+    };
+
+    OpenStreetMap.prototype._deactivateCenterChangeHandler = function() {
+      return this._map.off('dragend', this._onCenterChange);
+    };
+
+    OpenStreetMap.prototype._activateZoomChangeHandler = function() {
       return this._map.on('zoomend', this._onZoomChange);
+    };
+
+    OpenStreetMap.prototype._deactivateZoomChangeHandler = function() {
+      return this._map.off('zoomend', this._onZoomChange);
     };
 
     OpenStreetMap.prototype._onCenterChange = function() {
