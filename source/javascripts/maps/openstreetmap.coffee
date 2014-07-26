@@ -49,8 +49,8 @@ class @OpenStreetMap
     @_map.off('zoomend', @_onZoomChange)
 
   _onCenterChange: =>
-    center = @_map.getCenter()
-    @_centerChangeHandler?(center.lat, center.lng)
+    [lat, lon] = @getCenter()
+    @_centerChangeHandler?(lat, lon)
 
   _onZoomChange: =>
-    @_zoomChangeHandler?(@_map.getZoom())
+    @_zoomChangeHandler?(@getZoom())
