@@ -14,11 +14,11 @@ class @GoogleMaps
 
   setCenterChangeHandler: (fn) ->
     @_centerChangeHandler = fn
-    @_centerChangeListener = google.maps.event.addListener(@_map, 'dragend', @_onCenterChange)
+    @_activateCenterChangeListener()
 
   setZoomChangeHandler: (fn) ->
     @_zoomChangeHandler = fn
-    @_zoomChangeListener = google.maps.event.addListener(@_map, 'zoom_changed', @_onZoomChange)
+    @_activateZoomChangeListener()
 
   getCenter: ->
     center = @_map.getCenter()
@@ -28,14 +28,28 @@ class @GoogleMaps
     @_map.getZoom()
 
   setCenter: (lat, lon) ->
-    google.maps.event.removeListener(@_centerChangeListener)
+    @_deactivateCenterChangeListener()
     @_map.setCenter(new google.maps.LatLng(lat, lon))
-    @_centerChangeListener = google.maps.event.addListener(@_map, 'dragend', @_onCenterChange)
+    @_activateCenterChangeListener()
 
   setZoom: (zoom) ->
-    google.maps.event.removeListener(@_zoomChangeListener)
+    @_deactivateZoomChangeListener()
     @_map.setZoom(zoom)
+    @_activateZoomChangeListener()
+
+  # private
+
+  _activateCenterChangeListener: ->
+    @_centerChangeListener = google.maps.event.addListener(@_map, 'dragend', @_onCenterChange)
+
+  _deactivateCenterChangeListener: ->
+    google.maps.event.removeListener(@_centerChangeListener)
+
+  _activateZoomChangeListener: ->
     @_zoomChangeListener = google.maps.event.addListener(@_map, 'zoom_changed', @_onZoomChange)
+
+  _deactivateZoomChangeListener: ->
+    google.maps.event.removeListener(@_zoomChangeListener)
 
   _onCenterChange: =>
     [lat, lon] = @getCenter()

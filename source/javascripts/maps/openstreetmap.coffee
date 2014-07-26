@@ -1,5 +1,6 @@
 class @OpenStreetMap
   _map: null
+
   _centerChangeHandler: null
   _zoomChangeHandler: null
 
@@ -10,11 +11,11 @@ class @OpenStreetMap
 
   setCenterChangeHandler: (fn) ->
     @_centerChangeHandler = fn
-    @_map.on('dragend', @_onCenterChange)
+    @_activateCenterChangeHandler()
 
   setZoomChangeHandler: (fn) ->
     @_zoomChangeHandler = fn
-    @_map.on('zoomend', @_onZoomChange)
+    @_activateZoomChangeHandler()
 
   getCenter: ->
     center = @_map.getCenter()
@@ -24,14 +25,28 @@ class @OpenStreetMap
     @_map.getZoom()
 
   setCenter: (lat, lon) ->
-    @_map.off('dragend', @_onCenterChange)
+    @_deactivateCenterChangeHandler()
     @_map.setView([lat, lon], @_map.getZoom(), reset: true)
-    @_map.on('dragend', @_onCenterChange)
+    @_activateCenterChangeHandler()
 
   setZoom: (zoom) ->
-    @_map.off('zoomend', @_onZoomChange)
+    @_deactivateZoomChangeHandler()
     @_map.setZoom(zoom)
+    @_activateZoomChangeHandler()
+
+  # private
+
+  _activateCenterChangeHandler: ->
+    @_map.on('dragend', @_onCenterChange)
+
+  _deactivateCenterChangeHandler: ->
+    @_map.off('dragend', @_onCenterChange)
+
+  _activateZoomChangeHandler: ->
     @_map.on('zoomend', @_onZoomChange)
+
+  _deactivateZoomChangeHandler: ->
+    @_map.off('zoomend', @_onZoomChange)
 
   _onCenterChange: =>
     center = @_map.getCenter()
