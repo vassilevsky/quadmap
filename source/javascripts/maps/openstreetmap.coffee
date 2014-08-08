@@ -25,14 +25,17 @@ class @OpenStreetMap
     @_map.getZoom()
 
   setCenter: (lat, lon) ->
-    @_deactivateCenterChangeHandler()
-    @_map.setView([lat, lon], @_map.getZoom(), reset: true)
-    @_activateCenterChangeHandler()
+    [oldLat, oldLon] = @getCenter()
+    if lat != oldLat || lon != oldLon
+      @_deactivateCenterChangeHandler()
+      @_map.setView([lat, lon], @_map.getZoom(), reset: true)
+      @_activateCenterChangeHandler()
 
   setZoom: (zoom) ->
-    @_deactivateZoomChangeHandler()
-    @_map.setZoom(zoom)
-    @_activateZoomChangeHandler()
+    if zoom != @getZoom()
+      @_deactivateZoomChangeHandler()
+      @_map.setZoom(zoom)
+      @_activateZoomChangeHandler()
 
   # private
 

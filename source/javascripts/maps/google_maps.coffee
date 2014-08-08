@@ -28,14 +28,17 @@ class @GoogleMaps
     @_map.getZoom()
 
   setCenter: (lat, lon) ->
-    @_deactivateCenterChangeListener()
-    @_map.setCenter(new google.maps.LatLng(lat, lon))
-    @_activateCenterChangeListener()
+    [oldLat, oldLon] = @getCenter()
+    if lat != oldLat || lon != oldLon
+      @_deactivateCenterChangeListener()
+      @_map.setCenter(new google.maps.LatLng(lat, lon))
+      @_activateCenterChangeListener()
 
   setZoom: (zoom) ->
-    @_deactivateZoomChangeListener()
-    @_map.setZoom(zoom)
-    @_activateZoomChangeListener()
+    if zoom != @getZoom()
+      @_deactivateZoomChangeListener()
+      @_map.setZoom(zoom)
+      @_activateZoomChangeListener()
 
   # private
 

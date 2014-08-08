@@ -24,14 +24,17 @@ class @YandexMaps
     @_map.getZoom()
 
   setCenter: (lat, lon) ->
-    @_deactivateBoundsChangeHandler()
-    @_map.setCenter([lat, lon])
-    @_activateBoundsChangeHandler()
+    [oldLat, oldLon] = @getCenter()
+    if lat != oldLat || lon != oldLon
+      @_deactivateBoundsChangeHandler()
+      @_map.setCenter([lat, lon])
+      @_activateBoundsChangeHandler()
 
   setZoom: (zoom) ->
-    @_deactivateBoundsChangeHandler()
-    @_map.setZoom(zoom)
-    @_activateBoundsChangeHandler()
+    if zoom != @getZoom()
+      @_deactivateBoundsChangeHandler()
+      @_map.setZoom(zoom)
+      @_activateBoundsChangeHandler()
 
   # private
 
