@@ -12,6 +12,7 @@ class @DoubleGisMap
     @_id = id
     @_map = new DG.Map(id)
     @_map.setCenter(new DG.GeoPoint(lon, lat), zoom)
+    @_map.controls.add(new DG.Controls.Zoom())
 
   setCenterChangeHandler: (fn) ->
     @_centerChangeHandler = fn
