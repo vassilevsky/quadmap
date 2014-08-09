@@ -1,2 +1,2 @@
-//= require_tree ./maps
+//= require_tree ./_maps
 //= require_tree .
