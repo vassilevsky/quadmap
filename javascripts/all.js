@@ -20,6 +20,7 @@
       this._id = id;
       this._map = new DG.Map(id);
       this._map.setCenter(new DG.GeoPoint(lon, lat), zoom);
+      this._map.controls.add(new DG.Controls.Zoom());
     }
 
     DoubleGisMap.prototype.setCenterChangeHandler = function(fn) {
@@ -43,15 +44,23 @@
     };
 
     DoubleGisMap.prototype.setCenter = function(lat, lon) {
-      this._deactivateCenterChangeHandler();
-      this._map.setCenter(new DG.GeoPoint(lon, lat));
-      return this._activateCenterChangeHandler();
+      var oldLat, oldLon, _ref;
+      _ref = this.getCenter(), oldLat = _ref[0], oldLon = _ref[1];
+      if (lat !== oldLat || lon !== oldLon) {
+        d("2GIS center actually changed, moving map");
+        this._deactivateCenterChangeHandler();
+        this._map.setCenter(new DG.GeoPoint(lon, lat));
+        return this._activateCenterChangeHandler();
+      }
     };
 
     DoubleGisMap.prototype.setZoom = function(zoom) {
-      this._deactivateZoomChangeHandler();
-      this._map.setZoom(zoom);
-      return this._activateZoomChangeHandler();
+      if (zoom !== this.getZoom()) {
+        d("2GIS zoom actually changed, zooming map");
+        this._deactivateZoomChangeHandler();
+        this._map.setZoom(zoom);
+        return this._activateZoomChangeHandler();
+      }
     };
 
     DoubleGisMap.prototype._activateCenterChangeHandler = function() {
@@ -131,15 +140,23 @@
     };
 
     GoogleMaps.prototype.setCenter = function(lat, lon) {
-      this._deactivateCenterChangeListener();
-      this._map.setCenter(new google.maps.LatLng(lat, lon));
-      return this._activateCenterChangeListener();
+      var oldLat, oldLon, _ref;
+      _ref = this.getCenter(), oldLat = _ref[0], oldLon = _ref[1];
+      if (lat !== oldLat || lon !== oldLon) {
+        d("Google center actually changed, moving map");
+        this._deactivateCenterChangeListener();
+        this._map.setCenter(new google.maps.LatLng(lat, lon));
+        return this._activateCenterChangeListener();
+      }
     };
 
     GoogleMaps.prototype.setZoom = function(zoom) {
-      this._deactivateZoomChangeListener();
-      this._map.setZoom(zoom);
-      return this._activateZoomChangeListener();
+      if (zoom !== this.getZoom()) {
+        d("Google zoom actually changed, zooming map");
+        this._deactivateZoomChangeListener();
+        this._map.setZoom(zoom);
+        return this._activateZoomChangeListener();
+      }
     };
 
     GoogleMaps.prototype._activateCenterChangeListener = function() {
@@ -214,17 +231,25 @@
     };
 
     OpenStreetMap.prototype.setCenter = function(lat, lon) {
-      this._deactivateCenterChangeHandler();
-      this._map.setView([lat, lon], this._map.getZoom(), {
-        reset: true
-      });
-      return this._activateCenterChangeHandler();
+      var oldLat, oldLon, _ref;
+      _ref = this.getCenter(), oldLat = _ref[0], oldLon = _ref[1];
+      if (lat !== oldLat || lon !== oldLon) {
+        d("OSM center actually changed, moving map");
+        this._deactivateCenterChangeHandler();
+        this._map.setView([lat, lon], this._map.getZoom(), {
+          reset: true
+        });
+        return this._activateCenterChangeHandler();
+      }
     };
 
     OpenStreetMap.prototype.setZoom = function(zoom) {
-      this._deactivateZoomChangeHandler();
-      this._map.setZoom(zoom);
-      return this._activateZoomChangeHandler();
+      if (zoom !== this.getZoom()) {
+        d("OSM zoom actually changed, zooming map");
+        this._deactivateZoomChangeHandler();
+        this._map.setZoom(zoom);
+        return this._activateZoomChangeHandler();
+      }
     };
 
     OpenStreetMap.prototype._activateCenterChangeHandler = function() {
@@ -276,6 +301,7 @@
         center: [lat, lon],
         zoom: zoom
       });
+      this._map.controls.add(new ymaps.control.SmallZoomControl());
     }
 
     YandexMaps.prototype.setCenterChangeHandler = function(fn) {
@@ -297,15 +323,23 @@
     };
 
     YandexMaps.prototype.setCenter = function(lat, lon) {
-      this._deactivateBoundsChangeHandler();
-      this._map.setCenter([lat, lon]);
-      return this._activateBoundsChangeHandler();
+      var oldLat, oldLon, _ref;
+      _ref = this.getCenter(), oldLat = _ref[0], oldLon = _ref[1];
+      if (lat !== oldLat || lon !== oldLon) {
+        d("Yandex center actually changed, moving map");
+        this._deactivateBoundsChangeHandler();
+        this._map.setCenter([lat, lon]);
+        return this._activateBoundsChangeHandler();
+      }
     };
 
     YandexMaps.prototype.setZoom = function(zoom) {
-      this._deactivateBoundsChangeHandler();
-      this._map.setZoom(zoom);
-      return this._activateBoundsChangeHandler();
+      if (zoom !== this.getZoom()) {
+        d("Yandex zoom actually changed, zooming map");
+        this._deactivateBoundsChangeHandler();
+        this._map.setZoom(zoom);
+        return this._activateBoundsChangeHandler();
+      }
     };
 
     YandexMaps.prototype._activateBoundsChangeHandler = function() {
@@ -343,78 +377,70 @@
 
 }).call(this);
 (function() {
-  var d, lat, lon, maps, setCenter, setZoom, zoom, _ref, _ref1;
+  var maps, position2uri, setCenter, setZoom, uri2position, _ref;
 
-  d = function() {
+  this.d = function() {
     return console.debug(arguments);
   };
 
-  if (window.location.hash.length > 1) {
-    _ref = window.location.hash.replace('#', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
-    zoom = parseInt(zoom);
-    lat = parseFloat(lat);
-    lon = parseFloat(lon);
-    d("received initial zoom " + zoom + " and coordinates " + lat + ", " + lon + " from URL");
-  } else {
-    _ref1 = [14, 54.32, 48.4], zoom = _ref1[0], lat = _ref1[1], lon = _ref1[2];
+  uri2position = function() {
+    var lat, lon, zoom, _ref;
+    if (location.hash.length > 1) {
+      _ref = location.hash.replace('#', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
+      this.zoom = parseInt(zoom);
+      this.lat = parseFloat(lat);
+      this.lon = parseFloat(lon);
+      d("received zoom " + this.zoom + " and coordinates " + this.lat + ", " + this.lon + " from URL");
+      setCenter(this.lat, this.lon);
+      return setZoom(this.zoom);
+    }
+  };
+
+  position2uri = function() {
+    var uri;
+    uri = "http://" + location.host + "/#" + this.zoom + "/" + this.lat + "/" + this.lon;
+    return history.pushState(null, null, uri);
+  };
+
+  setCenter = function(lat, lon, source_map_name) {
+    var map, name, _ref;
+    d("Center of " + source_map_name + " map moved to " + lat + ", " + lon + ". Moving other maps...");
+    for (name in maps) {
+      map = maps[name];
+      if (name !== source_map_name) {
+        map.setCenter(lat, lon);
+      }
+    }
+    _ref = [lat, lon], this.lat = _ref[0], this.lon = _ref[1];
+    return position2uri();
+  };
+
+  setZoom = function(zoom, source_map_name) {
+    var map, name;
+    d("Zoom of " + source_map_name + " map changed to " + zoom + ". Zooming other maps...");
+    for (name in maps) {
+      map = maps[name];
+      if (name !== source_map_name) {
+        map.setZoom(zoom);
+      }
+    }
+    this.zoom = zoom;
+    return position2uri();
+  };
+
+  uri2position();
+
+  if (!(this.zoom && this.lat && this.lon)) {
+    _ref = [14, 54.32, 48.4], this.zoom = _ref[0], this.lat = _ref[1], this.lon = _ref[2];
+    position2uri();
   }
+
+  window.onpopstate = uri2position;
 
   maps = {};
 
-  setCenter = function(lat, lon, source_map_name) {
-    d('=====');
-    d("HAVE TO MOVE OTHER MAPS BECAUSE " + source_map_name + " HAS MOVED");
-    if (source_map_name !== 'osm') {
-      d("set osm center to " + lat + ", " + lon);
-      maps.osm.setCenter(lat, lon);
-    }
-    if (source_map_name !== 'google') {
-      d("set google center to " + lat + ", " + lon);
-      maps.google.setCenter(lat, lon);
-    }
-    if (source_map_name !== 'yandex') {
-      d("set yandex center to " + lat + ", " + lon);
-      maps.yandex.setCenter(lat, lon);
-    }
-    if (source_map_name !== 'dgis') {
-      d("set dgis center to " + lat + ", " + lon);
-      maps.dgis.setCenter(lat, lon);
-    }
-  };
-
-  setZoom = function(source_map_name) {
-    var new_zoom;
-    d('=====');
-    d("HAVE TO ZOOM OTHER MAPS BECAUSE " + source_map_name + " HAS CHANGED ZOOM");
-    new_zoom = maps[source_map_name].getZoom();
-    if (source_map_name !== 'osm') {
-      if (maps.osm.getZoom() !== new_zoom) {
-        d("set osm zoom to " + new_zoom);
-        maps.osm.setZoom(new_zoom);
-      }
-    }
-    if (source_map_name !== 'google') {
-      if (maps.google.getZoom() !== new_zoom) {
-        d("set google zoom to " + new_zoom);
-        maps.google.setZoom(new_zoom);
-      }
-    }
-    if (source_map_name !== 'yandex') {
-      if (maps.yandex.getZoom() !== new_zoom) {
-        d("set yandex zoom to " + new_zoom);
-        maps.yandex.setZoom(new_zoom);
-      }
-    }
-    if (source_map_name !== 'dgis') {
-      if (maps.dgis.getZoom() !== new_zoom) {
-        d("set dgis zoom to " + new_zoom);
-        maps.dgis.setZoom(new_zoom);
-      }
-    }
-  };
-
   window.onload = function() {
-    maps.osm = new OpenStreetMap('map1', lat, lon, zoom);
+    maps.osm = new OpenStreetMap('map1', this.lat, this.lon, this.zoom);
     maps.osm.setCenterChangeHandler((function(_this) {
       return function(lat, lon) {
         return setCenter(lat, lon, 'osm');
@@ -422,13 +448,13 @@
     })(this));
     return maps.osm.setZoomChangeHandler((function(_this) {
       return function(zoom) {
-        return setZoom('osm');
+        return setZoom(zoom, 'osm');
       };
     })(this));
   };
 
   google.maps.event.addDomListener(window, 'load', function() {
-    maps.google = new GoogleMaps('map2', lat, lon, zoom);
+    maps.google = new GoogleMaps('map2', this.lat, this.lon, this.zoom);
     maps.google.setCenterChangeHandler((function(_this) {
       return function(lat, lon) {
         return setCenter(lat, lon, 'google');
@@ -436,13 +462,13 @@
     })(this));
     return maps.google.setZoomChangeHandler((function(_this) {
       return function(zoom) {
-        return setZoom('google');
+        return setZoom(zoom, 'google');
       };
     })(this));
   });
 
   ymaps.ready(function() {
-    maps.yandex = new YandexMaps('map3', lat, lon, zoom);
+    maps.yandex = new YandexMaps('map3', this.lat, this.lon, this.zoom);
     maps.yandex.setCenterChangeHandler((function(_this) {
       return function(lat, lon) {
         return setCenter(lat, lon, 'yandex');
@@ -450,19 +476,23 @@
     })(this));
     return maps.yandex.setZoomChangeHandler((function(_this) {
       return function(zoom) {
-        return setZoom('yandex');
+        return setZoom(zoom, 'yandex');
       };
     })(this));
   });
 
   DG.autoload(function() {
-    maps.dgis = new DoubleGisMap('map4', lat, lon, zoom);
+    maps.dgis = new DoubleGisMap('map4', this.lat, this.lon, this.zoom);
     maps.dgis.setCenterChangeHandler(function(lat, lon) {
       return setCenter(lat, lon, 'dgis');
     });
     return maps.dgis.setZoomChangeHandler(function(zoom) {
-      return setZoom('dgis');
+      return setZoom(zoom, 'dgis');
     });
   });
 
+  this.maps = maps;
+
 }).call(this);
+
+
