@@ -1,20 +1,19 @@
 @d = -> console.debug arguments
 
-if location.hash.length > 1
-  [zoom, lat, lon] = location.hash.replace('#', '').split('/')
+uri2position = ->
+  if location.hash.length > 1
+    [zoom, lat, lon] = location.hash.replace('#', '').split('/')
 
-  @zoom = parseInt(zoom)
-  @lat = parseFloat(lat)
-  @lon = parseFloat(lon)
+    @zoom = parseInt(zoom)
+    @lat = parseFloat(lat)
+    @lon = parseFloat(lon)
 
-  d "received initial zoom #{@zoom} and coordinates #{@lat}, #{@lon} from URL"
-else
-  [@zoom, @lat, @lon] = [14, 54.32, 48.4]
-  updateURI()
+    d "received zoom #{@zoom} and coordinates #{@lat}, #{@lon} from URL"
 
-maps = {}
+    setCenter(@lat, @lon)
+    setZoom(@zoom)
 
-updateURI = ->
+position2uri = ->
   uri = "http://#{location.host}/##{@zoom}/#{@lat}/#{@lon}"
   history.pushState(null, null, uri)
 
@@ -22,13 +21,22 @@ setCenter = (lat, lon, source_map_name) ->
   d "Center of #{source_map_name} map moved to #{lat}, #{lon}. Moving other maps..."
   map.setCenter(lat, lon) for name, map of maps when name != source_map_name
   [@lat, @lon] = [lat, lon]
-  updateURI()
+  position2uri()
 
 setZoom = (zoom, source_map_name) ->
   d "Zoom of #{source_map_name} map changed to #{zoom}. Zooming other maps..."
   map.setZoom(zoom) for name, map of maps when name != source_map_name
   @zoom = zoom
-  updateURI()
+  position2uri()
+
+uri2position()
+unless @zoom && @lat && @lon
+  [@zoom, @lat, @lon] = [14, 54.32, 48.4]
+  position2uri()
+
+window.onpopstate = uri2position
+
+maps = {}
 
 window.onload = ->
   maps.osm = new OpenStreetMap('map1', @lat, @lon, @zoom)
