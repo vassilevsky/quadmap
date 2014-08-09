@@ -14,56 +14,14 @@ else
 maps = {}
 
 setCenter = (lat, lon, source_map_name) ->
-  d '====='
-  d "HAVE TO MOVE OTHER MAPS BECAUSE #{source_map_name} HAS MOVED"
-
-  unless source_map_name is 'osm'
-    d "set osm center to #{lat}, #{lon}"
-    maps.osm.setCenter(lat, lon)
-
-  unless source_map_name is 'google'
-    d "set google center to #{lat}, #{lon}"
-    maps.google.setCenter(lat, lon)
-
-  unless source_map_name is 'yandex'
-    d "set yandex center to #{lat}, #{lon}"
-    maps.yandex.setCenter(lat, lon)
-
-  unless source_map_name is 'dgis'
-    d "set dgis center to #{lat}, #{lon}"
-    maps.dgis.setCenter(lat, lon)
-
+  d "Center of #{source_map_name} map moved to #{lat}, #{lon}. Moving other maps..."
+  map.setCenter(lat, lon) for name, map of maps when name != source_map_name
   return
 
-
-setZoom = (source_map_name) ->
-  d '====='
-  d "HAVE TO ZOOM OTHER MAPS BECAUSE #{source_map_name} HAS CHANGED ZOOM"
-
-  new_zoom = maps[source_map_name].getZoom()
-
-  unless source_map_name is 'osm'
-    unless maps.osm.getZoom() == new_zoom
-      d "set osm zoom to #{new_zoom}"
-      maps.osm.setZoom(new_zoom)
-
-  unless source_map_name is 'google'
-    unless maps.google.getZoom() == new_zoom
-      d "set google zoom to #{new_zoom}"
-      maps.google.setZoom(new_zoom)
-
-  unless source_map_name is 'yandex'
-    unless maps.yandex.getZoom() == new_zoom
-      d "set yandex zoom to #{new_zoom}"
-      maps.yandex.setZoom(new_zoom)
-
-  unless source_map_name is 'dgis'
-    unless maps.dgis.getZoom() == new_zoom
-      d "set dgis zoom to #{new_zoom}"
-      maps.dgis.setZoom(new_zoom)
-
+setZoom = (zoom, source_map_name) ->
+  d "Zoom of #{source_map_name} map changed to #{zoom}. Zooming other maps..."
+  map.setZoom(zoom) for name, map of maps when name != source_map_name
   return
-
 
 window.onload = ->
   maps.osm = new OpenStreetMap('map1', lat, lon, zoom)
@@ -72,7 +30,7 @@ window.onload = ->
     setCenter(lat, lon, 'osm')
 
   maps.osm.setZoomChangeHandler (zoom) =>
-    setZoom('osm')
+    setZoom(zoom, 'osm')
 
 
 google.maps.event.addDomListener window, 'load', ->
@@ -82,7 +40,7 @@ google.maps.event.addDomListener window, 'load', ->
     setCenter(lat, lon, 'google')
 
   maps.google.setZoomChangeHandler (zoom) =>
-    setZoom('google')
+    setZoom(zoom, 'google')
 
 
 ymaps.ready ->
@@ -92,7 +50,7 @@ ymaps.ready ->
     setCenter(lat, lon, 'yandex')
 
   maps.yandex.setZoomChangeHandler (zoom) =>
-    setZoom('yandex')
+    setZoom(zoom, 'yandex')
 
 
 DG.autoload ->
@@ -102,4 +60,4 @@ DG.autoload ->
     setCenter(lat, lon, 'dgis')
 
   maps.dgis.setZoomChangeHandler (zoom) ->
-    setZoom('dgis')
+    setZoom(zoom, 'dgis')
