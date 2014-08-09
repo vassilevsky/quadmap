@@ -61,3 +61,5 @@ DG.autoload ->
 
   maps.dgis.setZoomChangeHandler (zoom) ->
     setZoom(zoom, 'dgis')
+
+@maps = maps
