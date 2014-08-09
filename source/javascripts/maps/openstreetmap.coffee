@@ -27,12 +27,14 @@ class @OpenStreetMap
   setCenter: (lat, lon) ->
     [oldLat, oldLon] = @getCenter()
     if lat != oldLat || lon != oldLon
+      d "OSM center actually changed, moving map"
       @_deactivateCenterChangeHandler()
       @_map.setView([lat, lon], @_map.getZoom(), reset: true)
       @_activateCenterChangeHandler()
 
   setZoom: (zoom) ->
     if zoom != @getZoom()
+      d "OSM zoom actually changed, zooming map"
       @_deactivateZoomChangeHandler()
       @_map.setZoom(zoom)
       @_activateZoomChangeHandler()

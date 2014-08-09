@@ -30,12 +30,14 @@ class @GoogleMaps
   setCenter: (lat, lon) ->
     [oldLat, oldLon] = @getCenter()
     if lat != oldLat || lon != oldLon
+      d "Google center actually changed, moving map"
       @_deactivateCenterChangeListener()
       @_map.setCenter(new google.maps.LatLng(lat, lon))
       @_activateCenterChangeListener()
 
   setZoom: (zoom) ->
     if zoom != @getZoom()
+      d "Google zoom actually changed, zooming map"
       @_deactivateZoomChangeListener()
       @_map.setZoom(zoom)
       @_activateZoomChangeListener()

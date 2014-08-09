@@ -31,12 +31,14 @@ class @DoubleGisMap
   setCenter: (lat, lon) ->
     [oldLat, oldLon] = @getCenter()
     if lat != oldLat || lon != oldLon
+      d "2GIS center actually changed, moving map"
       @_deactivateCenterChangeHandler()
       @_map.setCenter(new DG.GeoPoint(lon, lat))
       @_activateCenterChangeHandler()
 
   setZoom: (zoom) ->
     if zoom != @getZoom()
+      d "2GIS zoom actually changed, zooming map"
       @_deactivateZoomChangeHandler()
       @_map.setZoom(zoom)
       @_activateZoomChangeHandler()

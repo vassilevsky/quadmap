@@ -26,12 +26,14 @@ class @YandexMaps
   setCenter: (lat, lon) ->
     [oldLat, oldLon] = @getCenter()
     if lat != oldLat || lon != oldLon
+      d "Yandex center actually changed, moving map"
       @_deactivateBoundsChangeHandler()
       @_map.setCenter([lat, lon])
       @_activateBoundsChangeHandler()
 
   setZoom: (zoom) ->
     if zoom != @getZoom()
+      d "Yandex zoom actually changed, zooming map"
       @_deactivateBoundsChangeHandler()
       @_map.setZoom(zoom)
       @_activateBoundsChangeHandler()
