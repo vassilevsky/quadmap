@@ -8,6 +8,7 @@ class @YandexMaps
 
   constructor: (id, lat, lon, zoom) ->
     @_map = new ymaps.Map('map3', center: [lat, lon], zoom: zoom)
+    @_map.controls.add(new ymaps.control.SmallZoomControl())
 
   setCenterChangeHandler: (fn) ->
     @_centerChangeHandler = fn
