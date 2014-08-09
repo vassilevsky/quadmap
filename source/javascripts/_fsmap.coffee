@@ -3,13 +3,14 @@
 if window.location.hash.length > 1
   [zoom, lat, lon] = window.location.hash.replace('#', '').split('/')
 
-  zoom = parseInt(zoom)
-  lat = parseFloat(lat)
-  lon = parseFloat(lon)
+  @zoom = parseInt(zoom)
+  @lat = parseFloat(lat)
+  @lon = parseFloat(lon)
 
-  d "received initial zoom #{zoom} and coordinates #{lat}, #{lon} from URL"
+  d "received initial zoom #{@zoom} and coordinates #{@lat}, #{@lon} from URL"
 else
-  [zoom, lat, lon] = [14, 54.32, 48.4]
+  [@zoom, @lat, @lon] = [14, 54.32, 48.4]
+  updateURI()
 
 maps = {}
 
@@ -24,7 +25,7 @@ setZoom = (zoom, source_map_name) ->
   return
 
 window.onload = ->
-  maps.osm = new OpenStreetMap('map1', lat, lon, zoom)
+  maps.osm = new OpenStreetMap('map1', @lat, @lon, @zoom)
 
   maps.osm.setCenterChangeHandler (lat, lon) =>
     setCenter(lat, lon, 'osm')
@@ -34,7 +35,7 @@ window.onload = ->
 
 
 google.maps.event.addDomListener window, 'load', ->
-  maps.google = new GoogleMaps('map2', lat, lon, zoom)
+  maps.google = new GoogleMaps('map2', @lat, @lon, @zoom)
 
   maps.google.setCenterChangeHandler (lat, lon) =>
     setCenter(lat, lon, 'google')
@@ -44,7 +45,7 @@ google.maps.event.addDomListener window, 'load', ->
 
 
 ymaps.ready ->
-  maps.yandex = new YandexMaps('map3', lat, lon, zoom)
+  maps.yandex = new YandexMaps('map3', @lat, @lon, @zoom)
 
   maps.yandex.setCenterChangeHandler (lat, lon) =>
     setCenter(lat, lon, 'yandex')
@@ -54,7 +55,7 @@ ymaps.ready ->
 
 
 DG.autoload ->
-  maps.dgis = new DoubleGisMap('map4', lat, lon, zoom)
+  maps.dgis = new DoubleGisMap('map4', @lat, @lon, @zoom)
 
   maps.dgis.setCenterChangeHandler (lat, lon) ->
     setCenter(lat, lon, 'dgis')
