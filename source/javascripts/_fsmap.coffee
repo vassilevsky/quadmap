@@ -14,15 +14,21 @@ else
 
 maps = {}
 
+updateURI = ->
+  uri = "http://#{location.host}/##{@zoom}/#{@lat}/#{@lon}"
+  history.pushState(null, null, uri)
+
 setCenter = (lat, lon, source_map_name) ->
   d "Center of #{source_map_name} map moved to #{lat}, #{lon}. Moving other maps..."
   map.setCenter(lat, lon) for name, map of maps when name != source_map_name
-  return
+  [@lat, @lon] = [lat, lon]
+  updateURI()
 
 setZoom = (zoom, source_map_name) ->
   d "Zoom of #{source_map_name} map changed to #{zoom}. Zooming other maps..."
   map.setZoom(zoom) for name, map of maps when name != source_map_name
-  return
+  @zoom = zoom
+  updateURI()
 
 window.onload = ->
   maps.osm = new OpenStreetMap('map1', @lat, @lon, @zoom)
