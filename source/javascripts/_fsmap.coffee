@@ -1,4 +1,4 @@
-d = -> console.debug arguments
+@d = -> console.debug arguments
 
 if window.location.hash.length > 1
   [zoom, lat, lon] = window.location.hash.replace('#', '').split('/')
