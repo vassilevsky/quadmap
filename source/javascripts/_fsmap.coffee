@@ -2,7 +2,7 @@
 
 uri2position = ->
   if location.hash.length > 1
-    [zoom, lat, lon] = location.hash.replace('#', '').split('/')
+    [zoom, lat, lon] = location.hash.replace('#map=', '').split('/')
 
     @zoom = parseInt(zoom)
     @lat = parseFloat(lat)
@@ -14,7 +14,7 @@ uri2position = ->
     setZoom(@zoom)
 
 position2uri = ->
-  uri = "http://#{location.host}/##{@zoom}/#{@lat}/#{@lon}"
+  uri = "http://#{location.host}/#map=#{@zoom}/#{@lat}/#{@lon}"
   history.pushState(null, null, uri)
 
 setCenter = (lat, lon, source_map_name) ->
