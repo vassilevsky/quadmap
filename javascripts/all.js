@@ -386,7 +386,7 @@
   uri2position = function() {
     var lat, lon, zoom, _ref;
     if (location.hash.length > 1) {
-      _ref = location.hash.replace('#', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
+      _ref = location.hash.replace('#map=', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
       this.zoom = parseInt(zoom);
       this.lat = parseFloat(lat);
       this.lon = parseFloat(lon);
@@ -398,7 +398,7 @@
 
   position2uri = function() {
     var uri;
-    uri = "http://" + location.host + "/#" + this.zoom + "/" + this.lat + "/" + this.lon;
+    uri = "http://" + location.host + "/#map=" + this.zoom + "/" + this.lat + "/" + this.lon;
     return history.pushState(null, null, uri);
   };
 
