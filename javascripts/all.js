@@ -377,23 +377,36 @@
 
 }).call(this);
 (function() {
-  var maps, position2uri, setCenter, setZoom, uri2position, _ref;
+  var maps, position2uri, setCenter, setLocationFromDevice, setLocationFromUri, setLocationToRussia, setZoom;
 
   this.d = function() {
     return console.debug(arguments);
   };
 
-  uri2position = function() {
+  setLocationFromUri = function() {
     var lat, lon, zoom, _ref;
-    if (location.hash.length > 1) {
-      _ref = location.hash.replace('#map=', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
-      this.zoom = parseInt(zoom);
-      this.lat = parseFloat(lat);
-      this.lon = parseFloat(lon);
-      d("received zoom " + this.zoom + " and coordinates " + this.lat + ", " + this.lon + " from URL");
-      setCenter(this.lat, this.lon);
-      return setZoom(this.zoom);
-    }
+    _ref = location.hash.replace('#map=', '').split('/'), zoom = _ref[0], lat = _ref[1], lon = _ref[2];
+    zoom = parseInt(zoom);
+    lat = parseFloat(lat);
+    lon = parseFloat(lon);
+    d("received zoom " + zoom + " and coordinates " + lat + ", " + lon + " from URL");
+    setCenter(lat, lon);
+    return setZoom(zoom);
+  };
+
+  setLocationToRussia = function() {
+    d('setting location to include Russia');
+    setCenter(66, 99);
+    return setZoom(2);
+  };
+
+  setLocationFromDevice = function(position) {
+    var lat, lon;
+    lat = position.coords.latitude;
+    lon = position.coords.longitude;
+    d("received coordinates " + lat + ", " + lon + " from URL");
+    setCenter(lat, lon);
+    return setZoom(14);
   };
 
   position2uri = function() {
@@ -428,14 +441,14 @@
     return position2uri();
   };
 
-  uri2position();
+  window.onpopstate = setLocationFromUri;
 
-  if (!(this.zoom && this.lat && this.lon)) {
-    _ref = [14, 54.32, 48.4], this.zoom = _ref[0], this.lat = _ref[1], this.lon = _ref[2];
-    position2uri();
+  if (location.hash.length > 1) {
+    setLocationFromUri();
+  } else {
+    setLocationToRussia();
+    navigator.geolocation.getCurrentPosition(setLocationFromDevice);
   }
-
-  window.onpopstate = uri2position;
 
   maps = {};
 
