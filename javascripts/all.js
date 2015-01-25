@@ -417,7 +417,7 @@
 
   setCenter = function(lat, lon, source_map_name) {
     var map, name, _ref;
-    d("Center of " + source_map_name + " map moved to " + lat + ", " + lon + ". Moving other maps...");
+    d("" + source_map_name + " moved to " + lat + ", " + lon + ". Moving other maps...");
     for (name in maps) {
       map = maps[name];
       if (name !== source_map_name) {
@@ -430,7 +430,7 @@
 
   setZoom = function(zoom, source_map_name) {
     var map, name;
-    d("Zoom of " + source_map_name + " map changed to " + zoom + ". Zooming other maps...");
+    d("" + source_map_name + " zoomed to " + zoom + ". Zooming other maps...");
     for (name in maps) {
       map = maps[name];
       if (name !== source_map_name) {
