@@ -1,17 +1,31 @@
 @d = -> console.debug arguments
 
-uri2position = ->
-  if location.hash.length > 1
-    [zoom, lat, lon] = location.hash.replace('#map=', '').split('/')
+setLocationFromUri = ->
+  [zoom, lat, lon] = location.hash.replace('#map=', '').split('/')
 
-    @zoom = parseInt(zoom)
-    @lat = parseFloat(lat)
-    @lon = parseFloat(lon)
+  zoom = parseInt(zoom)
+  lat = parseFloat(lat)
+  lon = parseFloat(lon)
 
-    d "received zoom #{@zoom} and coordinates #{@lat}, #{@lon} from URL"
+  d "received zoom #{zoom} and coordinates #{lat}, #{lon} from URL"
 
-    setCenter(@lat, @lon)
-    setZoom(@zoom)
+  setCenter(lat, lon)
+  setZoom(zoom)
+
+setLocationToRussia = ->
+  d 'setting location to include Russia'
+
+  setCenter(66, 99)
+  setZoom(2)
+
+setLocationFromDevice = (position) ->
+  lat = position.coords.latitude
+  lon = position.coords.longitude
+
+  d "received coordinates #{lat}, #{lon} from URL"
+
+  setCenter(lat, lon)
+  setZoom(14)
 
 position2uri = ->
   uri = "http://#{location.host}/#map=#{@zoom}/#{@lat}/#{@lon}"
@@ -29,12 +43,15 @@ setZoom = (zoom, source_map_name) ->
   @zoom = zoom
   position2uri()
 
-uri2position()
-unless @zoom && @lat && @lon
-  [@zoom, @lat, @lon] = [14, 54.32, 48.4]
-  position2uri()
+################################################################################
 
-window.onpopstate = uri2position
+window.onpopstate = setLocationFromUri
+
+if location.hash.length > 1
+  setLocationFromUri()
+else
+  setLocationToRussia()
+  navigator.geolocation.getCurrentPosition(setLocationFromDevice)
 
 maps = {}
 
