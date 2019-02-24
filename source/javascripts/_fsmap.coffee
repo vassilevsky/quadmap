@@ -28,8 +28,7 @@ setLocationFromDevice = (position) ->
   setZoom(14)
 
 position2uri = ->
-  uri = "http://#{location.host}/#map=#{@zoom}/#{@lat}/#{@lon}"
-  history.pushState(null, null, uri)
+  window.location = "#map=#{@zoom}/#{@lat}/#{@lon}"
 
 setCenter = (lat, lon, source_map_name) ->
   d "#{source_map_name} moved to #{lat}, #{lon}. Moving other maps..."

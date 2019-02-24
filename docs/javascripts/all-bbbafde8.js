@@ -410,9 +410,7 @@
   };
 
   position2uri = function() {
-    var uri;
-    uri = "http://" + location.host + "/#map=" + this.zoom + "/" + this.lat + "/" + this.lon;
-    return history.pushState(null, null, uri);
+    return window.location = "#map=" + this.zoom + "/" + this.lat + "/" + this.lon;
   };
 
   setCenter = function(lat, lon, source_map_name) {
