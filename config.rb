@@ -51,6 +51,8 @@ set :js_dir, 'javascripts'
 
 set :images_dir, 'images'
 
+set :build_dir, 'docs' # for GitHub Pages
+
 # Build-specific configuration
 configure :build do
   # For example, change the Compass output style for deployment
